@@ -2,12 +2,37 @@ const isObject = value => {
 	return value && typeof value === 'object' && value.constructor === Object;
 };
 
-const objectForIn = (object, callback) => {
-	try {
-		Object.keys(object).map(item => {
-			callback(item);
+const isString = value => {
+	return typeof value === 'string' || value instanceof String;
+};
+
+const objectForIn = (object, callback, comparator = '') => {
+	if (isObject(object)) {
+		try {
+			Object.keys(object).map(item => {
+				callback(item);
+			});
+		} catch (error) {}
+	}
+};
+
+const objectContains = (object, value) => {
+	if (!isObject(object)) return false;
+	return (
+		Object.keys(object)
+			.filter(item => item === value)
+			.toString() === value && isString(value)
+	);
+};
+
+const allAreObjects = array => {
+	if (Array.isArray(array)) {
+		array.map(item => {
+			if (!isObject(item)) return false;
 		});
-	} catch (error) {}
+		return true;
+	}
+	return false;
 };
 
 const storageOperator = (type, key = '', value = '') => {
@@ -28,20 +53,28 @@ const storageOperator = (type, key = '', value = '') => {
 };
 
 export default class StorageManage {
-	constructor(managementType = 'cookie') {
-		let options = {
-			l: 'localstorage',
-			s: 'sessionstorage',
+	constructor(value = 'cookie') {
+		this.options = {
 			c: 'cookie',
 			cookie: 'cookie',
+			l: 'localstorage',
 			localstorage: 'localstorage',
+			s: 'sessionstorage',
 			sessionstorage: 'sessionstorage'
 		};
-		this.manage = options[managementType.toLowerCase().trim()];
+		Object.freeze(this.options);
+		this.manage;
+		this.changeManager('cookie');
 	}
 
-	parser = () => {
-		return this[this.manage].parser();
+	changeManager = value => {
+		if (objectContains(this.options, value)) {
+			this.manage = this.options[value.toLowerCase().trim()];
+		} else {
+			console.log('Value not exists:', value);
+			console.log('Accept only:', JSON.stringify(this.options));
+			this.manage = 'cookie';
+		}
 	};
 
 	get = (key, expect) => {
@@ -57,7 +90,7 @@ export default class StorageManage {
 
 	set = (key, value) => {
 		if (isObject(value)) value = JSON.stringify(value);
-		if (Array.isArray(value) && isObject(value[0])) value = JSON.stringify(value);
+		if (Array.isArray(value) && allAreObjects(value)) value = JSON.stringify(value);
 		this[this.manage].set(key, value);
 	};
 
@@ -69,6 +102,12 @@ export default class StorageManage {
 		this[this.manage].clear();
 	};
 
+	clearAll = () => {
+		this.cookie.clear();
+		this.localstorage.clear();
+		this.sessionstorage.clear();
+	};
+
 	json = key => {
 		try {
 			return JSON.parse(this[this.manage].get(key));
@@ -77,10 +116,6 @@ export default class StorageManage {
 				[key]: this[this.manage].get(key)
 			};
 		}
-	};
-
-	changeStruct = value => {
-		this.manage = value.toLowerCase().trim();
 	};
 
 	localstorage = {
@@ -125,11 +160,11 @@ export default class StorageManage {
 
 	cookie = {
 		parser: () => {
-			let cookies = document.cookie ? document.cookie.split('; ') : [];
+			const cookies = document.cookie ? document.cookie.split('; ') : [];
 			if (cookies.length === 0) return;
-			return cookies.map(value => value.split('=')).reduce((cookieItem, cookieValue) => {
-				cookieItem[decodeURIComponent(cookieValue[0].trim())] = decodeURIComponent(cookieValue[1].trim());
-				return cookieItem;
+			return cookies.map(value => value.split('=')).reduce((cookieAccumulator, cookieValue) => {
+				cookieAccumulator[decodeURIComponent(cookieValue[0].trim())] = decodeURIComponent(cookieValue[1].trim());
+				return cookieAccumulator;
 			}, {});
 		},
 		set: (key, value) => {
