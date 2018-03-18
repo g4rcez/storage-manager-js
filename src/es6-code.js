@@ -20,8 +20,8 @@ const objectContains = (object, value) => {
 	if (!isObject(object)) return false;
 	return (
 		Object.keys(object)
-			.filter(item => item === value)
-			.toString() === value && isString(value)
+		.filter(item => item === value)
+		.toString() === value && isString(value)
 	);
 };
 
@@ -64,7 +64,7 @@ export default class StorageManage {
 		};
 		Object.freeze(this.options);
 		this.manage;
-		this.changeManager('cookie');
+		this.changeManager(value);
 	}
 
 	changeManager = value => {
@@ -80,9 +80,9 @@ export default class StorageManage {
 	get = (key, expect) => {
 		let value = this[this.manage].get(key);
 		try {
-			return expect === 'raw' || expect === 'r'
-				? value
-				: expect === 'array' || expect === 'a' ? value.split(',') : JSON.parse(value);
+			return expect === 'raw' || expect === 'r' ?
+				value :
+				expect === 'array' || expect === 'a' ? value.split(',') : JSON.parse(value);
 		} catch (error) {
 			return value;
 		}
