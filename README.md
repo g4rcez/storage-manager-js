@@ -49,6 +49,6 @@ storage.clean() // clean all keys:values in Cookies/LocalStorage/SessionStorage
 - Generate es5 or commonJs code
 - Publish on NPM
 ## References
-
+- [My testimonial in pt-br, on my blog](https://vandalvnl.github.io/developer/2018/03/28/storage-manage.html)
 - [js-cookie/js-cookie](https://github.com/js-cookie/js-cookie)
 - [RFC 6265](https://tools.ietf.org/html/rfc6265)
