@@ -43,12 +43,24 @@ storage.unset("users") // delete key:value of 'users' in Cookies/LocalStorage/Se
 storage.clean() // clean all keys:values in Cookies/LocalStorage/SessionStorage
 ```
 
+## set(key, value, parameters)
+
+On set method, because cookie extra arguments like "path", "expires" and "domain", we have 3 arguments to this function while using Storage("cookie"), if you using Storage("localstorage") or Storage("sessionstorage") forgot 3 arguments and pass just 2 arguments. In order or arguments:
+
+- key: the "id" of your element
+- value: the value of key element
+- parameters: **USE ONLY IF YOUR STORAGE MANIPULATE COOKIES**. A object with 'expires' key and value (expires accept a integer of days and a string date), 'path' key and value and 'domain' key and value.
+
+## get(key, expected)
+This method it's simple, just pass a key and the StorageManager return the true value of your 'key'. So, if you expect a array or raw object, just pass ```get(key,'raw')``` for raw object or list and ```get(key,'array')``` for array.
+
 ## TODO List
 
 - Generate automatic test
 - Generate es5 or commonJs code
 - Publish on NPM
 ## References
-- [My testimonial in pt-br, on my blog](https://vandalvnl.github.io/developer/2018/03/28/storage-manage.html)
-- [js-cookie/js-cookie](https://github.com/js-cookie/js-cookie)
+
+- Inspired on my experience on using [js-cookie/js-cookie](https://github.com/js-cookie/js-cookie)
 - [RFC 6265](https://tools.ietf.org/html/rfc6265)
+- [My testimonial in pt-br, on my blog](https://vandalvnl.github.io/developer/2018/03/28/storage-manage.html)

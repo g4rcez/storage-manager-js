@@ -1,19 +1,22 @@
 const isObject = value => {
-  return value && typeof value === "object" && value.constructor === Object;
+  return value && typeof value === 'object' && value.constructor === Object;
 };
 
 const isString = value => {
-  return typeof value === "string" || value instanceof String;
+  return typeof value === 'string' || value instanceof String;
 };
 
-const objectForIn = (object, callback, comparator = "") => {
-  if (isObject(object)) {
-    try {
-      Object.keys(object).map(item => {
-        callback(item);
-      });
-    } catch (error) {}
-  }
+const objectForIn = (object, callback) => {
+  try {
+    Object.keys(object).map(item => {
+      return callback(item);
+    });
+  } catch (error) {}
+};
+
+const parseDateOrInteger = string => {
+  const withInteger = new Date(new Date() * 1 + string * 864e+5)
+  return !!parseInt(string) ? withInteger : string;
 };
 
 const objectContains = (object, value) => {
@@ -35,7 +38,7 @@ const allAreObjects = array => {
   return false;
 };
 
-const storageOperator = (type, key = "", value = "") => {
+const storageOperator = (type, key = '', value = '') => {
   return {
     parser: () => {
       return window[type];
@@ -53,17 +56,18 @@ const storageOperator = (type, key = "", value = "") => {
 };
 
 export default class StorageManage {
-  constructor(value = "cookie") {
+  constructor(value = 'cookie') {
     this.options = {
-      c: "cookie",
-      cookie: "cookie",
-      l: "localstorage",
-      localstorage: "localstorage",
-      s: "sessionstorage",
-      sessionstorage: "sessionstorage"
+      c: 'cookie',
+      l: 'localstorage',
+      s: 'sessionstorage',
+      cookie: 'cookie',
+      localstorage: 'localstorage',
+      sessionstorage: 'sessionstorage'
     };
-    Object.freeze(this.options);
+    this.cache;
     this.manage;
+    Object.freeze(this.options);
     this.changeManager(value);
   }
 
@@ -71,30 +75,29 @@ export default class StorageManage {
     if (objectContains(this.options, value)) {
       this.manage = this.options[value.toLowerCase().trim()];
     } else {
-      console.log("Value not exists:", value);
-      console.log("Accept only:", JSON.stringify(this.options));
-      this.manage = "cookie";
+      this.manage = 'cookie';
     }
+    this.cache = this[this.manage].parser();
   };
 
   get = (key, expect) => {
     let value = this[this.manage].get(key);
     try {
-      return expect === "raw" || expect === "r"
+      return expect === 'raw' || expect === 'r'
         ? value
-        : expect === "array" || expect === "a"
-          ? value.split(",")
+        : expect === 'array' || expect === 'a'
+          ? value.split(',')
           : JSON.parse(value);
     } catch (error) {
       return value;
     }
   };
 
-  set = (key, value) => {
+  set = (key, value, expires = '') => {
     if (isObject(value)) value = JSON.stringify(value);
     if (Array.isArray(value) && allAreObjects(value))
       value = JSON.stringify(value);
-    this[this.manage].set(key, value);
+    this[this.manage].set(key, value, expires);
   };
 
   unset = key => {
@@ -123,17 +126,17 @@ export default class StorageManage {
 
   localstorage = {
     parser: () => {
-      return storageOperator("localStorage").parser();
+      return storageOperator('localStorage').parser();
     },
     get: key => {
-      return storageOperator("localStorage").get(key);
+      return storageOperator('localStorage').get(key);
     },
     set: (key, value) => {
-      storageOperator("localStorage").set(key, value);
+      storageOperator('localStorage').set(key, value);
     },
     unset: key => {
       try {
-        storageOperator("localStorage").unset(key);
+        storageOperator('localStorage').unset(key);
       } catch (error) {}
     },
     clear: () => {
@@ -143,17 +146,17 @@ export default class StorageManage {
 
   sessionstorage = {
     parser: () => {
-      return storageOperator("sessionStorage").parser();
+      return storageOperator('sessionStorage').parser();
     },
     get: key => {
-      return storageOperator("sessionStorage").get(key);
+      return storageOperator('sessionStorage').get(key);
     },
     set: (key, value) => {
-      storageOperator("sessionStorage").set(key, value);
+      storageOperator('sessionStorage').set(key, value);
     },
     unset: key => {
       try {
-        storageOperator("sessionStorage").unset(key);
+        storageOperator('sessionStorage').unset(key);
       } catch (error) {}
     },
     clear: () => {
@@ -163,35 +166,42 @@ export default class StorageManage {
 
   cookie = {
     parser: () => {
-      const cookies = document.cookie ? document.cookie.split("; ") : [];
+      const cookies = document.cookie ? document.cookie.split('; ') : [];
       if (cookies.length === 0) return;
       return cookies
-        .map(value => value.split("="))
+        .map(value => value.split('='))
         .reduce((cookieAccumulator, cookieValue) => {
           cookieAccumulator[
-            decodeURIComponent(cookieValue[0].trim())
-          ] = decodeURIComponent(cookieValue[1].trim());
+            decodeURIComponent(cookieValue[0])
+          ] = decodeURIComponent(cookieValue[1]);
           return cookieAccumulator;
         }, {});
     },
-    set: (key, value) => {
-      document.cookie = `${encodeURIComponent(key)}=${encodeURIComponent(
+    set: (key, value, parameters) => {
+      const path = parameters.path || '';
+      const domain = parameters.domain || '';
+      const expires = parseDateOrInteger(parameters.expires.toString()) || '';
+      const query = `${encodeURIComponent(key)}=${encodeURIComponent(
         value
-      )}`;
+      )}; expires=${expires}; path='${path}'`;
+      document.cookie = query;
+      console.log(query);
+      this.cache = {
+        ...this.cache,
+        [key]: value
+      };
     },
     get: (key, expect) => {
       try {
-        return decodeURIComponent(
-          this.cookie.parser()[encodeURIComponent(key)]
-        );
+        return decodeURIComponent(this.cache[encodeURIComponent(key)]);
       } catch (error) {}
     },
     unset: key => {
       document.cookie =
-        encodeURIComponent(key) + "=; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+        encodeURIComponent(key) + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     },
     clear: () => {
-      objectForIn(this.cookie.parser, this.cookie.unset);
+      objectForIn(this.cookie.parser(), this.cookie.unset);
     }
   };
 }
