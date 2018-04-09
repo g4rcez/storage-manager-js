@@ -54,6 +54,9 @@ On set method, because cookie extra arguments like "path", "expires" and "domain
 ## get(key, expected)
 This method it's simple, just pass a key and the StorageManager return the true value of your 'key'. So, if you expect a array or raw object, just pass ```get(key,'raw')``` for raw object or list and ```get(key,'array')``` for array.
 
+## **New Version**to 
+In ```immutable-code.ts```, I decide to implement an Ice Factory Pattern, to grant a immutability. Now, set method have a validation to verify if value exist on storage.
+
 ## TODO List
 
 - Generate automatic test
@@ -64,3 +67,4 @@ This method it's simple, just pass a key and the StorageManager return the true 
 - Inspired on my experience on using [js-cookie/js-cookie](https://github.com/js-cookie/js-cookie)
 - [RFC 6265](https://tools.ietf.org/html/rfc6265)
 - [My testimonial in pt-br, on my blog](https://vandalvnl.github.io/developer/2018/03/28/storage-manage.html)
+- [Elegant Patterns in Modern Javascript: Ice Factory](https://medium.freecodecamp.org/elegant-patterns-in-modern-javascript-ice-factory-4161859a0eee)
