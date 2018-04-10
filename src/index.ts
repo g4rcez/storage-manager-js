@@ -1,3 +1,4 @@
+
 const isObject = (value) => {
 	return value && typeof value === 'object' && value.constructor === Object;
 };
@@ -16,7 +17,7 @@ const objectForIn = (object, callback) => {
 
 const parseDateOrInteger = (string) => {
 	let date: any = new Date();
-	const withInteger: any = new Date(date * 1 + string * 864e5);
+	const withInteger: Date = new Date(date * 1 + string * 864e5);
 	return !!parseInt(string) ? withInteger : string;
 };
 
@@ -136,15 +137,6 @@ const operator = {
 		},
 	},
 };
-// * TODO: compare a object if one equal exists
-const isEqual = (left, right) => {
-	const lengthObjects: Boolean = Object.keys(left).length === Object.keys(right).length;
-	if (!lengthObjects) return false;
-	const arrayOfTruth: Array<Boolean> = Object.keys(left).map((itemLeft) => {
-		return left[itemLeft] === right[itemLeft];
-	});
-	return arrayOfTruth.filter(Boolean).length === Object.keys(left).length;
-};
 
 export default function StorageManage(manager) {
 	const managers = Object.freeze({
@@ -165,7 +157,35 @@ export default function StorageManage(manager) {
 		unset,
 		clear,
 		clearAll,
+		// Alias for Get
+		item: get,
+		getItem: get,
+		cat: get,
+		// Alias for set
+		create: set,
+		setItem: set,
+		touch: set,
+		// Alias for unset
+		delete: unset,
+		remove: unset,
+		rm: unset,
+		// Alias for clearAll
+		purge: clearAll,
+		json,
 	});
+
+	function json() {
+		let parser = operator[manager].parser(),
+			json = {};
+		Object.keys(parser).map((item) => {
+			try {
+				json = { ...json, [item]: JSON.parse(parser[item]) };
+			} catch (error) {
+				json = { ...json, [item]: parser[item] };
+			}
+		});
+		return json;
+	}
 
 	function changeManager(value) {
 		if (objectContains(managers, value)) {
@@ -189,19 +209,11 @@ export default function StorageManage(manager) {
 
 	function set(key, value, expires = '') {
 		let objects;
-		if (cache !== {}) {
-			objects = cache;
-		} else {
-			objects = operator[manager].parser();
+		cache !== {} ? (objects = cache) : (objects = operator[manager].parser());
+		if (manager === 'cookie' || manager === 'c') {
+			if (isObject(value)) value = JSON.stringify(value);
+			if (Array.isArray(value) && allAreObjects(value)) value = JSON.stringify(value);
 		}
-		for (var object in objects) {
-			if (isEqual(value, JSON.parse(objects[object]))) {
-				console.warn('Object value already exists >_', key, value);
-				return;
-			}
-		}
-		if (isObject(value)) value = JSON.stringify(value);
-		if (Array.isArray(value) && allAreObjects(value)) value = JSON.stringify(value);
 		operator[manager].set(key, value, expires);
 	}
 
@@ -217,15 +229,5 @@ export default function StorageManage(manager) {
 		operator.cookie.clear();
 		operator.localstorage.clear();
 		operator.sessionstorage.clear();
-	}
-
-	function json(key) {
-		try {
-			return JSON.parse(operator[manager].get(key));
-		} catch (error) {
-			return {
-				[key]: operator[manager].get(key),
-			};
-		}
 	}
 }
