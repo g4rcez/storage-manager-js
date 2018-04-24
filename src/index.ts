@@ -12,7 +12,7 @@ const objectForIn = (object, callback) => {
 		Object.keys(object).map((item) => {
 			return callback(item);
 		});
-	} catch (error) {}
+	} catch (error) { }
 };
 
 const parseDateOrInteger = (string) => {
@@ -30,16 +30,6 @@ const objectContains = (object, value) => {
 	);
 };
 
-const allAreObjects = (array) => {
-	if (Array.isArray(array)) {
-		array.map((item) => {
-			if (!isObject(item)) return false;
-		});
-		return true;
-	}
-	return false;
-};
-
 let cache = {};
 
 const storageOperator = (type, key = '', value = '') => {
@@ -51,7 +41,7 @@ const storageOperator = (type, key = '', value = '') => {
 			return window[type][key];
 		},
 		set: (key, value) => {
-			window[type].setItem(key, value);
+			window[type][key] = value
 		},
 		unset: (key) => {
 			window[type].removeItem(key);
@@ -73,7 +63,7 @@ const operator = {
 		unset: (key) => {
 			try {
 				storageOperator('localStorage').unset(key);
-			} catch (error) {}
+			} catch (error) { }
 		},
 		clear: () => {
 			objectForIn(window.localStorage, operator.localstorage.unset);
@@ -92,7 +82,7 @@ const operator = {
 		unset: (key) => {
 			try {
 				storageOperator('sessionStorage').unset(key);
-			} catch (error) {}
+			} catch (error) { }
 		},
 		clear: () => {
 			objectForIn(window.sessionStorage, operator.sessionstorage.unset);
@@ -108,24 +98,13 @@ const operator = {
 			}, {});
 		},
 		set: (key, value, parameters = { path: '', domain: '', expires: '' }) => {
-			let path;
-			let domain;
-			let expires;
-			try {
-				path = parameters.path || '';
-				domain = parameters.domain || '';
-				expires = parseDateOrInteger(parameters.expires.toString()) || '';
-			} catch (error) {}
-			document.cookie = `${encodeURIComponent(key)}=${encodeURIComponent(value)}; expires=${expires}; path='${path}'`;
-			cache = {
-				...cache,
-				[key]: value,
-			};
+			let path = parameters.path || '';
+			let domain = parameters.domain || '';
+			let expires = parseDateOrInteger(parameters.expires) || '';
+			document.cookie = `${encodeURIComponent(key)}=${encodeURIComponent(value)}; expires=${expires}; path='${path}';domain='${domain}'`;
 		},
 		get: (key, expect) => {
-			try {
-				return decodeURIComponent(cache[encodeURIComponent(key)]);
-			} catch (error) {}
+			return cache[key];
 		},
 		unset: (key) => {
 			document.cookie = encodeURIComponent(key) + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
@@ -147,8 +126,12 @@ export default function StorageManage(manager) {
 		localstorage: 'localstorage',
 		sessionstorage: 'sessionstorage',
 	});
-
-	manager = managers[manager.toLowerCase()] || 'cookie';
+	if (!!Storage) {
+		manager = managers[manager.toLowerCase()] || 'cookie';
+	} else {
+		console.warn("Browser doesn't have support to Storage")
+		manager = 'cookie'
+	}
 
 	return Object.freeze({
 		changeManager,
@@ -208,13 +191,8 @@ export default function StorageManage(manager) {
 	}
 
 	function set(key, value, expires = '') {
-		let objects;
-		cache !== {} ? (objects = cache) : (objects = operator[manager].parser());
-		if (manager === 'cookie' || manager === 'c') {
-			if (isObject(value)) value = JSON.stringify(value);
-			if (Array.isArray(value) && allAreObjects(value)) value = JSON.stringify(value);
-		}
-		operator[manager].set(key, value, expires);
+		operator[manager].set(key, JSON.stringify(value), expires);
+		cache = { ...cache, [key]: value }
 	}
 
 	function unset(key) {
@@ -226,8 +204,6 @@ export default function StorageManage(manager) {
 	}
 
 	function clearAll() {
-		operator.cookie.clear();
-		operator.localstorage.clear();
-		operator.sessionstorage.clear();
+		['cookie', 'localstorage', 'sessionstorage'].forEach(x => operator[x].clear())
 	}
 }
