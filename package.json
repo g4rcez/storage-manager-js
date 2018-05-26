@@ -21,6 +21,6 @@
 		"type": "git",
 		"url": "https://github.com/vandalvnl/storage-manager"
 	},
-	"author": "Allan Garcez",
+	"author": "Allan Garcez <vandal.vnl.dev@gmail.com> (https://github.com/vandalvnl)",
 	"license": "MIT"	
 }
