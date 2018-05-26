@@ -2,13 +2,16 @@
 
 A little way to control Cookies, LocalStorage and SessionStorage without tears
 
-> **index.js** is already ready to production and **index.ts** it's a 'human version' in Typescript. **es6-code** is the first version and not using Ice Factory
+## Install
+
+```shell
+$ npm install storage-manager-js
+```
 
 ## Using
 
-
 ```javascript
-import StorageManage from "./src/index.js"
+import StorageManage from 'storage-manager-js';
 
 const storage = StorageManage(); // if not pass, works with cookies
 // StorageManage('c') || StorageManage('cookie') works with cookies
@@ -16,34 +19,31 @@ const storage = StorageManage(); // if not pass, works with cookies
 // StorageManage('s') || StorageManage('sessionstorage') or works with SessionStorage
 
 let test = {
-    simple: if you pass a object, StorageManage automatically convert to string with JSON.stringify(),
-    verySimple: if you try recover object, StorageManage automatically convert to object with JSON.parse()
-}
+	simple: 'if you pass a object, StorageManage automatically convert to string with JSON.stringify()',
+	verySimple: 'if you try recover object, StorageManage automatically convert to object with JSON.parse()',
+};
 
-let numericArray = [1,2,3,4,5,6,7,8,9,0] // if you use cookies, this transform in string
-let users = [
-    {username:"foo", repo :"bar"},
-    {username:"bar", repo :"foo"},
-] // if array[0] equals a object, StorageManage convert to Json string with JSON.stringify()
+let numericArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]; // if you use cookies, this transform in string
+let users = [{ username: 'foo', repo: 'bar' }, { username: 'bar', repo: 'foo' }]; // if array[0] equals a object, StorageManage convert to Json string with JSON.stringify()
 
 // Setting keys:values
-storage.set("one","1"); // just set Cookie/LocalStorage/SessionStorage
-storage.set("numbers",numericArray); // just set Cookie/LocalStorage/SessionStorage
-storage.set("awesome", test) // set test object as string
-storage.set("users", users) // set test object as string
+storage.set('one', '1'); // just set Cookie/LocalStorage/SessionStorage
+storage.set('numbers', numericArray); // just set Cookie/LocalStorage/SessionStorage
+storage.set('awesome', test); // set test object as string
+storage.set('users', users); // set test object as string
 
-storage.get("one") // return 1
-storage.get("test") // return test as Json object (using JSON.parse())
-storage.get("test", 'raw') // return string of test object (same as storage in Cookie/LocalStorage/SessionStorage)
+storage.get('one'); // return 1
+storage.get('test'); // return test as Json object (using JSON.parse())
+storage.get('test', 'raw'); // return string of test object (same as storage in Cookie/LocalStorage/SessionStorage)
 // You can use 'raw' or 'r'
-storage.get("users") // return Json object
-storage.get("numbers") // return string
-storage.get("numbers", "array") // return array (split with ',')
+storage.get('users'); // return Json object
+storage.get('numbers'); // return string
+storage.get('numbers', 'array'); // return array (split with ',')
 // You can use 'array' or 'a'
 
-storage.unset("users") // delete key:value of 'users' in Cookies/LocalStorage/SessionStorage
+storage.unset('users'); // delete key:value of 'users' in Cookies/LocalStorage/SessionStorage
 
-storage.clean() // clean all keys:values in Cookies/LocalStorage/SessionStorage
+storage.clean(); // clean all keys:values in Cookies/LocalStorage/SessionStorage
 ```
 
 ## set(key, value, parameters)
@@ -53,20 +53,31 @@ On set method, because cookie extra arguments like "path", "expires" and "domain
 * key: the "id" of your element
 * value: the value of key element
 * parameters: **USE ONLY IF YOUR STORAGE MANIPULATE COOKIES**. A object with 'expires' key and value (expires accept a integer of days and a string date), 'path' key and value and 'domain' key and value.
+* Accepted calls: 'set', 'create', 'setItem', 'touch' (Linux like)
 
 ## get(key, expected)
 
 This method it's simple, just pass a key and the StorageManager return the true value of your 'key'. So, if you expect a array or raw object, just pass `get(key,'raw')` for raw object or list and `get(key,'array')` for array.
 
-## **New Version**to
+* key: the "id" of your element
+* Accepted calls: 'get', 'item', 'getItem', 'cat'(Linux like)
 
-In `immutable-code.ts`, I decide to implement an Ice Factory Pattern, to grant a immutability. Now, set method have a validation to verify if value exist on storage.
+## json()
 
-## TODO List
+Return an Object, contains all keys:values of your actual storage.
 
-* Generate automatic test
-* Generate es5 or commonJs code
-* Publish on NPM
+## unset(key)
+
+Clear a value of given key. After that you receive 'undefined' for unset keys
+
+* key: the "id" of your element
+* Accept calls: 'unset', 'delete', 'remove', 'rm' (Linux like)
+
+## clearAll()
+
+The same of 'unset', but clean all values of all keys in all managers (LocalStorage, SessionStorage and Cookies)
+
+* Accept calls: 'clearAll', 'purge'
 
 ## References
 
