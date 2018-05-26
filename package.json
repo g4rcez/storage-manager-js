@@ -1,13 +1,26 @@
 {
 	"name": "storage-manager",
-	"version": "0.0.1",
+	"version": "1.0.0",
 	"description": "A little way to control Cookies, LocalStorage and SessionStorage without tears",
-	"main": "src/es6-code.js",
-	"keywords": ["cookie", "cookies", "browser", "localstorage", "sessionstorage", "client", "js-cookie", "es6"],
+	"main": "src/index.js",
+	"keywords": [
+		"cookie",
+		"cookies",
+		"browser",
+		"localstorage",
+		"sessionstorage",
+		"client",
+		"js-cookie",
+		"storage",
+		"manager",
+		"localStorage",
+		"sessionStorage"
+	],
+	"homepage": "https://github.com/vandalvnl/storage-manager",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/vandalvnl/storage-manager"
 	},
 	"author": "Allan Garcez",
-	"license": "GPL3"
+	"license": "MIT"	
 }
