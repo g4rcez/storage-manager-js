@@ -6,7 +6,7 @@ const isString = value => {
 	return typeof value === 'string' || value instanceof String;
 };
 
-const objectForIn = (object, callback) => {
+const objKeysMap = (object, callback) => {
 	try {
 		Object.keys(object).map(item => {
 			return callback(item);
@@ -14,13 +14,13 @@ const objectForIn = (object, callback) => {
 	} catch (error) {}
 };
 
-const parseDateOrInteger = string => {
+const intDate = string => {
 	let date: any = new Date();
 	const withInteger: Date = new Date(date * 1 + string * 864e5);
 	return !!parseInt(string) ? withInteger : string;
 };
 
-const objectContains = (object, value) => {
+const contains = (object, value) => {
 	if (!isObject(object)) return false;
 	return (
 		Object.keys(object)
@@ -31,78 +31,61 @@ const objectContains = (object, value) => {
 
 let cache = {};
 
-const storageOperator = (type, key = '', value = '') => {
-	return {
-		parser: () => {
-			return window[type];
-		},
-		get: key => {
-			return window[type][key];
-		},
-		set: (key, value) => {
-			window[type][key] = value;
-		},
-		unset: key => {
-			window[type].removeItem(key);
-		},
-	};
-};
-
 const operator = {
 	localstorage: {
 		parser: () => {
-			return storageOperator('localStorage').parser();
+			return window.localStorage;
 		},
 		get: key => {
-			return storageOperator('localStorage').get(key);
+			return window.localStorage.getItem(key);
 		},
 		set: (key, value) => {
-			storageOperator('localStorage').set(key, value);
+			window.localStorage.setItem(key, value);
 		},
 		unset: key => {
 			try {
-				storageOperator('localStorage').unset(key);
+				window.localStorage.removeItem(key);
 			} catch (error) {}
 		},
 		clear: () => {
-			objectForIn(window.localStorage, operator.localstorage.unset);
+			objKeysMap(window.localStorage, operator.localstorage.unset);
 		},
 	},
 	sessionstorage: {
 		parser: () => {
-			return storageOperator('sessionStorage').parser();
+			return window.sessionStorage;
 		},
 		get: key => {
-			return storageOperator('sessionStorage').get(key);
+			return window.sessionStorage.getItem(key);
 		},
 		set: (key, value) => {
-			storageOperator('sessionStorage').set(key, value);
+			window.sessionStorage.setItem(key, value);
 		},
 		unset: key => {
 			try {
-				storageOperator('sessionStorage').unset(key);
+				window.sessionStorage.removeItem(key);
 			} catch (error) {}
 		},
 		clear: () => {
-			objectForIn(window.sessionStorage, operator.sessionstorage.unset);
+			objKeysMap(window.sessionStorage, operator.sessionstorage.unset);
 		},
 	},
 	cookie: {
 		parser: () => {
-			const cookies = document.cookie ? document.cookie.split('; ') : [];
-			if (cookies.length === 0) return;
-			return cookies.map(value => value.split('=')).reduce((cookieAccumulator, cookieValue) => {
-				cookieAccumulator[decodeURIComponent(cookieValue[0])] = decodeURIComponent(cookieValue[1]);
-				return cookieAccumulator;
+			const all = document.cookie ? document.cookie.split('; ') : [];
+			if (all.length === 0) return;
+			return all.map(val => val.split('=')).reduce((acc, val) => {
+				acc[decodeURIComponent(val[0])] = decodeURIComponent(val[1]);
+				return acc;
 			}, {});
 		},
 		set: (key, val, parameters = { expires: '' }) => {
-			let exp = parseDateOrInteger(parameters.expires) || '';
+			let exp = intDate(parameters.expires) || '';
 			!!exp
 				? (document.cookie = `${encodeURIComponent(key)}=${encodeURIComponent(val)};expires="${exp}";`)
 				: (document.cookie = `${encodeURIComponent(key)}=${encodeURIComponent(val)}`);
 		},
-		get: (key, expect) => {
+		get: key => {
 			return cache[key];
 		},
 		unset: key => {
@@ -110,13 +93,13 @@ const operator = {
 			cache[key] = undefined;
 		},
 		clear: () => {
-			objectForIn(operator.cookie.parser(), operator.cookie.unset);
+			objKeysMap(operator.cookie.parser(), operator.cookie.unset);
 			cache = {};
 		},
 	},
 };
 
-export default function StorageManage(manager) {
+export default function StorageManage(manager = 'cookie') {
 	const managers = Object.freeze({
 		c: 'cookie',
 		l: 'localstorage',
@@ -133,32 +116,29 @@ export default function StorageManage(manager) {
 	}
 
 	return Object.freeze({
-		changeManager,
 		get,
 		set,
-		unset,
+		json,
 		clear,
+		unset,
+		change,
 		clearAll,
-		// Alias for Get
-		item: get,
-		getItem: get,
 		cat: get,
-		// Alias for set
-		create: set,
-		setItem: set,
+		all: json,
+		item: get,
+		rm: unset,
 		touch: set,
-		// Alias for unset
+		create: set,
+		getItem: get,
+		setItem: set,
 		delete: unset,
 		remove: unset,
-		rm: unset,
-		// Alias for clearAll
 		purge: clearAll,
-		json,
 	});
 
 	function json() {
-		let parser = operator[manager].parser(),
-			json = {};
+		const parser = operator[manager].parser();
+		let json = {};
 		Object.keys(parser).map(item => {
 			try {
 				json = { ...json, [item]: JSON.parse(parser[item]) };
@@ -169,13 +149,14 @@ export default function StorageManage(manager) {
 		return json;
 	}
 
-	function changeManager(value) {
-		if (objectContains(managers, value)) {
+	function change(value = 'cookie') {
+		if (contains(managers, value)) {
 			manager = managers[value.toLowerCase().trim()];
 		} else {
 			manager = 'cookie';
 		}
 		cache = operator[manager].parser();
+		return this;
 	}
 
 	function get(key, expect) {
@@ -194,17 +175,21 @@ export default function StorageManage(manager) {
 	function set(key, value, expires = '') {
 		operator[manager].set(key, JSON.stringify(value), expires);
 		cache = { ...cache, [key]: value };
+		return this;
 	}
 
 	function unset(key) {
 		operator[manager].unset(key);
+		return this;
 	}
 
 	function clear() {
 		operator[manager].clear();
+		return this;
 	}
 
 	function clearAll() {
 		['cookie', 'localstorage', 'sessionstorage'].forEach(x => operator[x].clear());
+		return this;
 	}
 }
