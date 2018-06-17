@@ -83,5 +83,5 @@ The same of 'unset', but clean all values of all keys in all managers (LocalStor
 
 * Inspired on my experience on using [js-cookie/js-cookie](https://github.com/js-cookie/js-cookie)
 * [RFC 6265](https://tools.ietf.org/html/rfc6265)
-* [My testimonial in pt-br, on my blog](https://vandalvnl.github.io/developer/2018/03/28/storage-manage.html)
+* [My testimonial in pt-br, on my blog](https://medium.com/@allan.f.garcez/storage-managerjs-d66241b45ec6)
 * [Elegant Patterns in Modern Javascript: Ice Factory](https://medium.freecodecamp.org/elegant-patterns-in-modern-javascript-ice-factory-4161859a0eee)
