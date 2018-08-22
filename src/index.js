@@ -12,7 +12,7 @@ const objKeysMap = (object, callback) => {
 const intDate = (string) => {
 	let date = new Date();
 	const withInteger = new Date(date * 1 + string * 864e5);
-	return !!parseInt(string) ? withInteger : string;
+	return !!parseInt(string, 10) ? withInteger : string;
 };
 
 const contains = (object, value) =>
@@ -118,11 +118,12 @@ const StorageManagerJs = (manager = "cookie") => {
 	});
 
 	function json() {
-		Object.keys(operator[manager].parser()).map((item) => {
+		const parser = operator[manager].parser();
+		Object.keys().map((item) => {
 			try {
-				return { ...object, [item]: JSON.parse(parser[item]) };
+				return { [item]: JSON.parse(parser[item]) };
 			} catch (error) {
-				return { ...object, [item]: parser[item] };
+				return { [item]: parser[item] };
 			}
 		});
 	}
