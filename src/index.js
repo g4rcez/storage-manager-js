@@ -1,1 +1,175 @@
-"use strict";var a=this&&this.t||Object.assign||function(e){for(var t,n=1,r=arguments.length;n<r;n++){t=arguments[n];for(var o in t)if(Object.prototype.hasOwnProperty.call(t,o))e[o]=t[o]}return e};exports.o=true;var n=function(e){return e&&typeof e==="object"&&e.constructor===Object};var r=function(e){return typeof e==="string"||e instanceof String};var e=function(e,t){try{Object.keys(e).map(function(e){return t(e)})}catch(n){}};var i=function(e){var t=new Date;var n=new Date(t*1+e*864e5);return!!parseInt(e)?n:e};var o=function(e,t){return!n(e)?false:Object.keys(e).filter(function(e){return e===t}).toString()===t&&r(t)};var c={};var u={i:{u:function(){return window.localStorage},get:function(e){return window.localStorage.getItem(e)},set:function(e,t){return window.localStorage.setItem(e,t)},s:function(e){try{window.localStorage.removeItem(e)}catch(t){}},clear:function(){e(window.localStorage,u.i.s)}},l:{u:function(){return window.sessionStorage},get:function(e){return window.sessionStorage.getItem(e)},set:function(e,t){return window.sessionStorage.setItem(e,t)},s:function(e){try{window.sessionStorage.removeItem(e)}catch(t){}},clear:function(){e(window.sessionStorage,u.l.s)}},cookie:{u:function(){var e=document.cookie!==""?document.cookie.split("; "):[];if(e.length===0)return;return e.map(function(e){return e.split("=")}).reduce(function(e,t){e[decodeURIComponent(t[0])]=decodeURIComponent(t[1]);return e},{})},set:function(e,t,n){if(n===void 0){n={g:"",path:"/",domain:""}}var r=i(n.g)||"";var o=n.path||"";var c=n.domain||document.location.hostname;document.cookie=encodeURIComponent(e)+"="+encodeURIComponent(t)+';expires="'+r+'";path='+o+";domain="+c},get:function(e){return c[e]},s:function(e){document.cookie=encodeURIComponent(e)+"=; expires=Thu, 01 Jan 1970 00:00:00 GMT;";c[e]=undefined},clear:function(){e(u.cookie.u(),u.cookie.s);c={}}}};function StorageManage(i){if(i===void 0){i="cookie"}var t=Object.freeze({c:"cookie",v:"localstorage",p:"sessionstorage",cookie:"cookie",i:"localstorage",l:"sessionstorage"});if(!!Storage){i=t[i.toLowerCase()]||"cookie"}else{console.warn("Browser doesn't have support to Storage");i="cookie"}return Object.freeze({get:get,set:set,json:json,clear:clear,s:unset,h:change,m:clearAll,j:get,all:json,item:get,O:unset,k:set,create:set,getItem:get,setItem:set,"delete":unset,remove:unset,I:clearAll});function json(){var o=u[i].u();var c={};Object.keys(o).map(function(e){var t,n;try{c=a({},c,(t={},t[e]=JSON.parse(o[e]),t))}catch(r){c=a({},c,(n={},n[e]=o[e],n))}});return c}function change(e){if(e===void 0){e="cookie"}if(o(t,e)){i=t[e.toLowerCase().trim()]}else{i="cookie"}c=u[i].u();return this}function get(e,t){var n=u[i].get(e);try{return t==="raw"||t==="r"?n:t==="array"||t==="a"?n.split(","):JSON.parse(n)}catch(r){return n}}function set(e,t,n){if(n===void 0){n=""}var r;u[i].set(e,JSON.stringify(t),n);c=a({},c,(r={},r[e]=t,r));return this}function unset(e){u[i].s(e);return this}function clear(){u[i].clear();return this}function clearAll(){["cookie","localstorage","sessionstorage"].forEach(function(e){return u[e].clear()});return this}}exports["default"]=StorageManage;"use strict";var a=this&&this.t||Object.assign||function(e){for(var t,n=1,r=arguments.length;n<r;n++){t=arguments[n];for(var o in t)if(Object.prototype.hasOwnProperty.call(t,o))e[o]=t[o]}return e};exports.o=true;var n=function(e){return e&&typeof e==="object"&&e.constructor===Object};var r=function(e){return typeof e==="string"||e instanceof String};var e=function(e,t){try{Object.keys(e).map(function(e){return t(e)})}catch(n){}};var i=function(e){var t=new Date;var n=new Date(t*1+e*864e5);return!!parseInt(e)?n:e};var o=function(e,t){return!n(e)?false:Object.keys(e).filter(function(e){return e===t}).toString()===t&&r(t)};var c={};var u={i:{u:function(){return window.localStorage},get:function(e){return window.localStorage.getItem(e)},set:function(e,t){return window.localStorage.setItem(e,t)},s:function(e){try{window.localStorage.removeItem(e)}catch(t){}},clear:function(){e(window.localStorage,u.i.s)}},l:{u:function(){return window.sessionStorage},get:function(e){return window.sessionStorage.getItem(e)},set:function(e,t){return window.sessionStorage.setItem(e,t)},s:function(e){try{window.sessionStorage.removeItem(e)}catch(t){}},clear:function(){e(window.sessionStorage,u.l.s)}},cookie:{u:function(){var e=document.cookie!==""?document.cookie.split("; "):[];if(e.length===0)return;return e.map(function(e){return e.split("=")}).reduce(function(e,t){e[decodeURIComponent(t[0])]=decodeURIComponent(t[1]);return e},{})},set:function(e,t,n){if(n===void 0){n={g:"",path:"/",domain:""}}var r=i(n.g)||"";var o=n.path||"";var c=n.domain||document.location.hostname;document.cookie=encodeURIComponent(e)+"="+encodeURIComponent(t)+';expires="'+r+'";path='+o+";domain="+c},get:function(e){return c[e]},s:function(e){document.cookie=encodeURIComponent(e)+"=; expires=Thu, 01 Jan 1970 00:00:00 GMT;";c[e]=undefined},clear:function(){e(u.cookie.u(),u.cookie.s);c={}}}};function StorageManage(i){if(i===void 0){i="cookie"}var t=Object.freeze({c:"cookie",v:"localstorage",p:"sessionstorage",cookie:"cookie",i:"localstorage",l:"sessionstorage"});if(!!Storage){i=t[i.toLowerCase()]||"cookie"}else{console.warn("Browser doesn't have support to Storage");i="cookie"}return Object.freeze({get:get,set:set,json:json,clear:clear,s:unset,h:change,m:clearAll,j:get,all:json,item:get,O:unset,k:set,create:set,getItem:get,setItem:set,"delete":unset,remove:unset,I:clearAll});function json(){var o=u[i].u();var c={};Object.keys(o).map(function(e){var t,n;try{c=a({},c,(t={},t[e]=JSON.parse(o[e]),t))}catch(r){c=a({},c,(n={},n[e]=o[e],n))}});return c}function change(e){if(e===void 0){e="cookie"}if(o(t,e)){i=t[e.toLowerCase().trim()]}else{i="cookie"}c=u[i].u();return this}function get(e,t){var n=u[i].get(e);try{return t==="raw"||t==="r"?n:t==="array"||t==="a"?n.split(","):JSON.parse(n)}catch(r){return n}}function set(e,t,n){if(n===void 0){n=""}var r;u[i].set(e,JSON.stringify(t),n);c=a({},c,(r={},r[e]=t,r));return this}function unset(e){u[i].s(e);return this}function clear(){u[i].clear();return this}function clearAll(){["cookie","localstorage","sessionstorage"].forEach(function(e){return u[e].clear()});return this}}exports["default"]=StorageManage;
+const isObject = (value) => value && typeof value === "object" && value.constructor === Object;
+const isString = (value) => typeof value === "string" || value instanceof String;
+
+const objKeysMap = (object, callback) => {
+	try {
+		Object.keys(object).map((item) => {
+			return callback(item);
+		});
+	} catch (error) {}
+};
+
+const intDate = (string) => {
+	let date = new Date();
+	const withInteger = new Date(date * 1 + string * 864e5);
+	return !!parseInt(string) ? withInteger : string;
+};
+
+const contains = (object, value) =>
+	!isObject(object)
+		? false
+		: Object.keys(object)
+				.filter((item) => item === value)
+				.toString() === value && isString(value);
+
+let cache = {};
+
+const operator = {
+	localstorage: {
+		parser: () => window.localStorage,
+		get: (key) => window.localStorage.getItem(key),
+		set: (key, value) => window.localStorage.setItem(key, value),
+		unset: (key) => {
+			try {
+				window.localStorage.removeItem(key);
+			} catch (error) {}
+		},
+		clear: () => {
+			objKeysMap(window.localStorage, operator.localstorage.unset);
+		},
+	},
+	sessionstorage: {
+		parser: () => window.sessionStorage,
+		get: (key) => window.sessionStorage.getItem(key),
+		set: (key, value) => window.sessionStorage.setItem(key, value),
+		unset: (key) => {
+			try {
+				window.sessionStorage.removeItem(key);
+			} catch (error) {}
+		},
+		clear: () => {
+			objKeysMap(window.sessionStorage, operator.sessionstorage.unset);
+		},
+	},
+	cookie: {
+		parser: () => {
+			const all = document.cookie !== "" ? document.cookie.split("; ") : [];
+			if (all.length === 0) return;
+			return all.map((val) => val.split("=")).reduce((acc, val) => {
+				acc[decodeURIComponent(val[0])] = decodeURIComponent(val[1]);
+				return acc;
+			}, {});
+		},
+		set: (key, val, parameters = { expires: "", path: "/", domain: "" }) => {
+			let exp = intDate(parameters.expires) || "";
+			let path = parameters.path || "";
+			let domain = parameters.domain || document.location.hostname;
+			document.cookie = `${encodeURIComponent(key)}=${encodeURIComponent(
+				val,
+			)};expires="${exp}";path=${path};domain=${domain}`;
+		},
+		get: (key) => cache[key],
+		unset: (key) => {
+			document.cookie = encodeURIComponent(key) + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT;";
+			cache[key] = undefined;
+		},
+		clear: () => {
+			objKeysMap(operator.cookie.parser(), operator.cookie.unset);
+			cache = {};
+		},
+	},
+};
+
+const StorageManagerJs = (manager = "cookie") => {
+	const managers = Object.freeze({
+		c: "cookie",
+		l: "localstorage",
+		s: "sessionstorage",
+		cookie: "cookie",
+		localstorage: "localstorage",
+		sessionstorage: "sessionstorage",
+	});
+	if (!!Storage) {
+		manager = managers[manager.toLowerCase()] || "cookie";
+	} else {
+		console.warn("Browser doesn't have support to Storage");
+		manager = "cookie";
+	}
+
+	return Object.freeze({
+		get,
+		set,
+		json,
+		clear,
+		unset,
+		change,
+		clearAll,
+		cat: get,
+		all: json,
+		item: get,
+		rm: unset,
+		touch: set,
+		create: set,
+		getItem: get,
+		setItem: set,
+		delete: unset,
+		remove: unset,
+		purge: clearAll,
+	});
+
+	function json() {
+		Object.keys(operator[manager].parser()).map((item) => {
+			try {
+				return { ...object, [item]: JSON.parse(parser[item]) };
+			} catch (error) {
+				return { ...object, [item]: parser[item] };
+			}
+		});
+	}
+
+	function change(value = "cookie") {
+		if (contains(managers, value)) {
+			manager = managers[value.toLowerCase().trim()];
+		} else {
+			manager = "cookie";
+		}
+		cache = operator[manager].parser();
+		return this;
+	}
+
+	function get(key, expect) {
+		let value = operator[manager].get(key);
+		try {
+			return expect === "raw" || expect === "r"
+				? value
+				: expect === "array" || expect === "a"
+					? value.split(",")
+					: JSON.parse(value);
+		} catch (error) {
+			return value;
+		}
+	}
+
+	function set(key, value, expires = "") {
+		operator[manager].set(key, JSON.stringify(value), expires);
+		cache = { ...cache, [key]: value };
+		return this;
+	}
+
+	function unset(key) {
+		operator[manager].unset(key);
+		return this;
+	}
+
+	function clear() {
+		operator[manager].clear();
+		return this;
+	}
+
+	function clearAll() {
+		["cookie", "localstorage", "sessionstorage"].forEach((x) => operator[x].clear());
+		return this;
+	}
+};
+
+export default StorageManagerJs;
