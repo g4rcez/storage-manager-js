@@ -1,8 +1,8 @@
 const isObject = value =>
   value && typeof value === "object" && value.constructor === Object;
-const isString = value => typeof value === "string" || value instanceof String;
+const isStr = value => typeof value === "string" || value instanceof String;
 
-const objKeysMap = (object, callback) => {
+const mapper = (object, callback) => {
   try {
     Object.keys(object).map(item => {
       return callback(item);
@@ -10,22 +10,22 @@ const objKeysMap = (object, callback) => {
   } catch (error) {}
 };
 
-const intDate = string => {
+const fnDate = str => {
   let date: any = new Date();
-  const withInteger = new Date(date * 1 + string * 864e5);
-  return !!parseInt(string, 10) ? withInteger : string;
+  const integer: Date = new Date(date * 1 + str * 864e5);
+  return !!parseInt(str, 10) ? integer : str;
 };
 
-const contains = (object, value) =>
+const has = (object, value) =>
   !isObject(object)
     ? false
     : Object.keys(object)
         .filter(item => item === value)
-        .toString() === value && isString(value);
+        .toString() === value && isStr(value);
 
-let cache = {};
+let c = {};
 
-const operator = {
+const op = {
   localstorage: {
     parser: () => window.localStorage,
     get: key => window.localStorage.getItem(key),
@@ -36,7 +36,7 @@ const operator = {
       } catch (error) {}
     },
     clear: () => {
-      objKeysMap(window.localStorage, operator.localstorage.unset);
+      mapper(window.localStorage, op.localstorage.unset);
     }
   },
   sessionstorage: {
@@ -49,7 +49,7 @@ const operator = {
       } catch (error) {}
     },
     clear: () => {
-      objKeysMap(window.sessionStorage, operator.sessionstorage.unset);
+      mapper(window.sessionStorage, op.sessionstorage.unset);
     }
   },
   cookie: {
@@ -62,27 +62,27 @@ const operator = {
       }, {});
     },
     set: (key, val, parameters = { expires: "", path: "/", domain: "" }) => {
-      let exp = intDate(parameters.expires) || "";
+      let exp = fnDate(parameters.expires) || "";
       let path = parameters.path || "";
       let domain = parameters.domain || document.location.hostname;
       document.cookie = `${encodeURIComponent(key)}=${encodeURIComponent(
         val
       )};expires="${exp}";path=${path};domain=${domain}`;
     },
-    get: key => cache[key],
+    get: key => c[key],
     unset: key => {
       document.cookie =
         encodeURIComponent(key) + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT;";
-      cache[key] = undefined;
+      c[key] = undefined;
     },
     clear: () => {
-      objKeysMap(operator.cookie.parser(), operator.cookie.unset);
-      cache = {};
+      mapper(op.cookie.parser(), op.cookie.unset);
+      c = {};
     }
   }
 };
 
-const StorageManagerJs = (manager = "cookie") => {
+export default function StorageManagerJs(manager = "cookie") {
   const managers = Object.freeze({
     c: "cookie",
     l: "localstorage",
@@ -118,9 +118,8 @@ const StorageManagerJs = (manager = "cookie") => {
     remove: unset,
     purge: clearAll
   });
-
   function json() {
-    const parser = operator[manager].parser();
+    const parser = op[manager].parser();
     Object.keys(parser).map(item => {
       try {
         return { [item]: JSON.parse(parser[item]) };
@@ -129,19 +128,17 @@ const StorageManagerJs = (manager = "cookie") => {
       }
     });
   }
-
   function change(value = "cookie") {
-    if (contains(managers, value)) {
+    if (has(managers, value)) {
       manager = managers[value.toLowerCase().trim()];
     } else {
       manager = "cookie";
     }
-    cache = operator[manager].parser();
+    c = op[manager].parser();
     return this;
   }
-
   function get(key, expect) {
-    let value = operator[manager].get(key);
+    let value = op[manager].get(key);
     try {
       return expect === "raw" || expect === "r"
         ? value
@@ -152,29 +149,21 @@ const StorageManagerJs = (manager = "cookie") => {
       return value;
     }
   }
-
   function set(key, value, expires = "") {
-    operator[manager].set(key, JSON.stringify(value), expires);
-    cache = { ...cache, [key]: value };
+    op[manager].set(key, JSON.stringify(value), expires);
+    c = { ...c, [key]: value };
     return this;
   }
-
   function unset(key) {
-    operator[manager].unset(key);
+    op[manager].unset(key);
     return this;
   }
-
   function clear() {
-    operator[manager].clear();
+    op[manager].clear();
     return this;
   }
-
   function clearAll() {
-    ["cookie", "localstorage", "sessionstorage"].forEach(x =>
-      operator[x].clear()
-    );
+    ["cookie", "localstorage", "sessionstorage"].forEach(x => op[x].clear());
     return this;
   }
-};
-
-export default StorageManagerJs;
+}
