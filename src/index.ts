@@ -10,12 +10,6 @@ const mapper = (object, callback) => {
   } catch (error) {}
 };
 
-const fnDate = str => {
-  let date: any = new Date();
-  const integer: Date = new Date(date * 1 + str * 864e5);
-  return !!parseInt(str, 10) ? integer : str;
-};
-
 const has = (object, value) =>
   !isObject(object)
     ? false
@@ -54,26 +48,29 @@ const op = {
   },
   cookie: {
     parser: () => {
-      const all = document.cookie !== "" ? document.cookie.split("; ") : [];
-      if (all.length === 0) return;
-      return all.map(val => val.split("=")).reduce((acc, val) => {
-        acc[decodeURIComponent(val[0])] = decodeURIComponent(val[1]);
-        return acc;
-      }, {});
+      if (document.cookie === "") {
+        return {};
+      }
+      return document.cookie
+        .split("; ")
+        .map(v => v.split("="))
+        .reduce((acc, v) => {
+          acc[decodeURIComponent(v[0].trim())] = decodeURIComponent(
+            v[1].trim()
+          );
+          return acc;
+        }, {});
     },
-    set: (key, val, parameters = { expires: "", path: "/", domain: "" }) => {
-      let exp = fnDate(parameters.expires) || "";
-      let path = parameters.path || "";
-      let domain = parameters.domain || document.location.hostname;
-      document.cookie = `${encodeURIComponent(key)}=${encodeURIComponent(
-        val
-      )};expires="${exp}";path=${path};domain=${domain}`;
+    set: (key, val) => {
+      console.log(`${key}=${val}; Path=/;`);
+      document.cookie = `${key}=${val}; Path=/;`;
     },
     get: key => c[key],
     unset: key => {
-      document.cookie =
-        encodeURIComponent(key) + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT;";
-      c[key] = undefined;
+      document.cookie = `${encodeURIComponent(
+        key
+      )}=; expires=Thu, 01 Jan 1970 00:00:00 GMT;`;
+      c[key] = null;
     },
     clear: () => {
       mapper(op.cookie.parser(), op.cookie.unset);
@@ -150,7 +147,10 @@ export default function StorageManagerJs(manager = "cookie") {
     }
   }
   function set(key, value, expires = "") {
-    op[manager].set(key, JSON.stringify(value), expires);
+    if(typeof value === 'string'){
+      op[manager].set(key, value, expires);
+    }else{
+      op[manager].set(key, JSON.stringify(value), expires);}
     c = { ...c, [key]: value };
     return this;
   }

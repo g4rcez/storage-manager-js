@@ -1,1 +1,189 @@
-"use strict";var __assign=this&&this.__assign||function(){return __assign=Object.assign||function(a){for(var b,d=1,e=arguments.length;d<e;d++)for(var f in b=arguments[d],b)Object.prototype.hasOwnProperty.call(b,f)&&(a[f]=b[f]);return a},__assign.apply(this,arguments)};exports.__esModule=!0;var isObject=function(a){return a&&"object"==typeof a&&a.constructor===Object},isStr=function(a){return"string"==typeof a||a instanceof String},mapper=function(a,b){try{Object.keys(a).map(function(d){return b(d)})}catch(d){}},fnDate=function(a){var b=new Date,d=new Date(1*b+864e5*a);return!parseInt(a,10)?a:d},has=function(a,b){return!!isObject(a)&&Object.keys(a).filter(function(d){return d===b}).toString()===b&&isStr(b)},c={},op={localstorage:{parser:function(){return window.localStorage},get:function(a){return window.localStorage.getItem(a)},set:function(a,b){return window.localStorage.setItem(a,b)},unset:function(a){try{window.localStorage.removeItem(a)}catch(b){}},clear:function(){mapper(window.localStorage,op.localstorage.unset)}},sessionstorage:{parser:function(){return window.sessionStorage},get:function(a){return window.sessionStorage.getItem(a)},set:function(a,b){return window.sessionStorage.setItem(a,b)},unset:function(a){try{window.sessionStorage.removeItem(a)}catch(b){}},clear:function(){mapper(window.sessionStorage,op.sessionstorage.unset)}},cookie:{parser:function(){var a=""===document.cookie?[]:document.cookie.split("; ");return 0===a.length?void 0:a.map(function(b){return b.split("=")}).reduce(function(b,d){return b[decodeURIComponent(d[0])]=decodeURIComponent(d[1]),b},{})},set:function(a,b,d){void 0===d&&(d={expires:"",path:"/",domain:""});var e=fnDate(d.expires)||"",f=d.path||"",g=d.domain||document.location.hostname;document.cookie=encodeURIComponent(a)+"="+encodeURIComponent(b)+";expires=\""+e+"\";path="+f+";domain="+g},get:function(a){return c[a]},unset:function(a){document.cookie=encodeURIComponent(a)+"=; expires=Thu, 01 Jan 1970 00:00:00 GMT;",c[a]=void 0},clear:function(){mapper(op.cookie.parser(),op.cookie.unset),c={}}}};function StorageManagerJs(a){function b(){var l=op[a].parser();Object.keys(l).map(function(m){var o,q;try{return o={},o[m]=JSON.parse(l[m]),o}catch(r){return q={},q[m]=l[m],q}})}function e(l,m){var o=op[a].get(l);try{return"raw"===m||"r"===m?o:"array"===m||"a"===m?o.split(","):JSON.parse(o)}catch(q){return o}}function f(l,m,o){void 0===o&&(o="");var q;return op[a].set(l,JSON.stringify(m),o),c=__assign({},c,(q={},q[l]=m,q)),this}function g(l){return op[a].unset(l),this}function j(){return["cookie","localstorage","sessionstorage"].forEach(function(l){return op[l].clear()}),this}void 0===a&&(a="cookie");var k=Object.freeze({c:"cookie",l:"localstorage",s:"sessionstorage",cookie:"cookie",localstorage:"localstorage",sessionstorage:"sessionstorage"});return Storage?a=k[a.toLowerCase()]||"cookie":(console.warn("Browser doesn't have support to Storage"),a="cookie"),Object.freeze({get:e,set:f,json:b,clear:function(){return op[a].clear(),this},unset:g,change:function(l){return void 0===l&&(l="cookie"),a=has(k,l)?k[l.toLowerCase().trim()]:"cookie",c=op[a].parser(),this},clearAll:j,cat:e,all:b,item:e,rm:g,touch:f,create:f,getItem:e,setItem:f,"delete":g,remove:g,purge:j})}exports["default"]=StorageManagerJs;
+"use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+exports.__esModule = true;
+var isObject = function (value) {
+    return value && typeof value === "object" && value.constructor === Object;
+};
+var isStr = function (value) { return typeof value === "string" || value instanceof String; };
+var mapper = function (object, callback) {
+    try {
+        Object.keys(object).map(function (item) {
+            return callback(item);
+        });
+    }
+    catch (error) { }
+};
+var has = function (object, value) {
+    return !isObject(object)
+        ? false
+        : Object.keys(object)
+            .filter(function (item) { return item === value; })
+            .toString() === value && isStr(value);
+};
+var c = {};
+var op = {
+    localstorage: {
+        parser: function () { return window.localStorage; },
+        get: function (key) { return window.localStorage.getItem(key); },
+        set: function (key, value) { return window.localStorage.setItem(key, value); },
+        unset: function (key) {
+            try {
+                window.localStorage.removeItem(key);
+            }
+            catch (error) { }
+        },
+        clear: function () {
+            mapper(window.localStorage, op.localstorage.unset);
+        }
+    },
+    sessionstorage: {
+        parser: function () { return window.sessionStorage; },
+        get: function (key) { return window.sessionStorage.getItem(key); },
+        set: function (key, value) { return window.sessionStorage.setItem(key, value); },
+        unset: function (key) {
+            try {
+                window.sessionStorage.removeItem(key);
+            }
+            catch (error) { }
+        },
+        clear: function () {
+            mapper(window.sessionStorage, op.sessionstorage.unset);
+        }
+    },
+    cookie: {
+        parser: function () {
+            if (document.cookie === "") {
+                return {};
+            }
+            return document.cookie
+                .split("; ")
+                .map(function (v) { return v.split("="); })
+                .reduce(function (acc, v) {
+                acc[decodeURIComponent(v[0].trim())] = decodeURIComponent(v[1].trim());
+                return acc;
+            }, {});
+        },
+        set: function (key, val) {
+            console.log(key + "=" + val + "; Path=/;");
+            document.cookie = key + "=" + val + "; Path=/;";
+        },
+        get: function (key) { return c[key]; },
+        unset: function (key) {
+            document.cookie = encodeURIComponent(key) + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT;";
+            c[key] = null;
+        },
+        clear: function () {
+            mapper(op.cookie.parser(), op.cookie.unset);
+            c = {};
+        }
+    }
+};
+function StorageManagerJs(manager) {
+    if (manager === void 0) { manager = "cookie"; }
+    var managers = Object.freeze({
+        c: "cookie",
+        l: "localstorage",
+        s: "sessionstorage",
+        cookie: "cookie",
+        localstorage: "localstorage",
+        sessionstorage: "sessionstorage"
+    });
+    if (!!Storage) {
+        manager = managers[manager.toLowerCase()] || "cookie";
+    }
+    else {
+        console.warn("Browser doesn't have support to Storage");
+        manager = "cookie";
+    }
+    return Object.freeze({
+        get: get,
+        set: set,
+        json: json,
+        clear: clear,
+        unset: unset,
+        change: change,
+        clearAll: clearAll,
+        cat: get,
+        all: json,
+        item: get,
+        rm: unset,
+        touch: set,
+        create: set,
+        getItem: get,
+        setItem: set,
+        "delete": unset,
+        remove: unset,
+        purge: clearAll
+    });
+    function json() {
+        var parser = op[manager].parser();
+        Object.keys(parser).map(function (item) {
+            var _a, _b;
+            try {
+                return _a = {}, _a[item] = JSON.parse(parser[item]), _a;
+            }
+            catch (error) {
+                return _b = {}, _b[item] = parser[item], _b;
+            }
+        });
+    }
+    function change(value) {
+        if (value === void 0) { value = "cookie"; }
+        if (has(managers, value)) {
+            manager = managers[value.toLowerCase().trim()];
+        }
+        else {
+            manager = "cookie";
+        }
+        c = op[manager].parser();
+        return this;
+    }
+    function get(key, expect) {
+        var value = op[manager].get(key);
+        try {
+            return expect === "raw" || expect === "r"
+                ? value
+                : expect === "array" || expect === "a"
+                    ? value.split(",")
+                    : JSON.parse(value);
+        }
+        catch (error) {
+            return value;
+        }
+    }
+    function set(key, value, expires) {
+        if (expires === void 0) { expires = ""; }
+        var _a;
+        if (typeof value === 'string') {
+            op[manager].set(key, value, expires);
+        }
+        else {
+            op[manager].set(key, JSON.stringify(value), expires);
+        }
+        c = __assign({}, c, (_a = {}, _a[key] = value, _a));
+        return this;
+    }
+    function unset(key) {
+        op[manager].unset(key);
+        return this;
+    }
+    function clear() {
+        op[manager].clear();
+        return this;
+    }
+    function clearAll() {
+        ["cookie", "localstorage", "sessionstorage"].forEach(function (x) { return op[x].clear(); });
+        return this;
+    }
+}
+exports["default"] = StorageManagerJs;
