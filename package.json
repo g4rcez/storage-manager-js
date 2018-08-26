@@ -1,8 +1,8 @@
 {
 	"name": "storage-manager-js",
-	"version": "1.0.13",
+	"version": "1.1.0",
 	"description": "A little way to control Cookies, LocalStorage and SessionStorage without tears",
-	"main": "./src/index.js",
+	"main": "./build/index.js",
 	"keywords": [
 		"cookie",
 		"cookies",

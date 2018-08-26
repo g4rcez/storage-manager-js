@@ -1,0 +1,11 @@
+{
+	"compilerOptions": {
+		"module": "amd",
+		"noImplicitAny": true,
+		"removeComments": true,
+		"preserveConstEnums": true,
+		"sourceMap": true,
+		"lib": ["es2018", "dom"],
+		"emitDecoratorMetadata": true
+	}
+}

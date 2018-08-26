@@ -1,93 +1,140 @@
-const isObject = value =>
-  value && typeof value === "object" && value.constructor === Object;
-const isStr = value => typeof value === "string" || value instanceof String;
+interface Parameters {
+  path?: string;
+  expires?: number | string;
+}
 
-const mapper = (object, callback) => {
+interface IStorageManager {
+  get: Function;
+  set: Function;
+  json: Function;
+  clear: Function;
+  unset: Function;
+  change: Function;
+  clearAll: Function;
+  cat: Function;
+  all: Function;
+  item: Function;
+  rm: Function;
+  touch: Function;
+  create: Function;
+  getItem: Function;
+  setItem: Function;
+  delete: Function;
+  remove: Function;
+  purge: Function;
+}
+
+const isStr = (value: any) =>
+  typeof value === "string" || value instanceof String;
+
+const fnDate = (str: any) => {
+  let date: any = new Date();
+  const integer: Date = new Date(date * 1 + str * 864e5);
+  return !!parseInt(str, 10) ? integer : str;
+};
+
+const mapper = (object: object, callback: Function): void => {
   try {
-    Object.keys(object).forEach(item => callback(item));
+    Object.keys(object).forEach(x => callback(x));
   } catch (error) {}
 };
 
-const has = (object, value) =>
-  !isObject(object)
-    ? false
-    : Object.keys(object)
-        .filter(item => item === value)
-        .toString() === value && isStr(value);
+export const Storages = {
+  cookie: "cookie",
+  localStorage: "localstorage",
+  sessionStorage: "sessionstorage"
+};
 
-const op = {
+const op: any = {
   localstorage: {
-    parser: () => window.localStorage,
-    get: key => window.localStorage.getItem(key),
-    set: (key, value) => window.localStorage.setItem(key, value),
-    unset: key => {
+    parser: (): object => window.localStorage,
+    get: (key: string): any => window.localStorage.getItem(key),
+    set: (key: string, value: any): void =>
+      window.localStorage.setItem(key, value),
+    unset: (key: string): void => {
       try {
         window.localStorage.removeItem(key);
       } catch (error) {}
     },
-    clear: () => {
+    clear: (): void => {
       mapper(window.localStorage, op.localstorage.unset);
     }
   },
   sessionstorage: {
-    parser: () => window.sessionStorage,
-    get: key => window.sessionStorage.getItem(key),
-    set: (key, value) => window.sessionStorage.setItem(key, value),
-    unset: key => {
+    parser: (): object => window.sessionStorage,
+    get: (key: string): any => window.sessionStorage.getItem(key),
+    set: (key: string, value: any): void =>
+      window.sessionStorage.setItem(key, value),
+    unset: (key: string): void => {
       try {
         window.sessionStorage.removeItem(key);
       } catch (error) {}
     },
-    clear: () => {
+    clear: (): void => {
       mapper(window.sessionStorage, op.sessionstorage.unset);
     }
   },
   cookie: {
-    parser: () => {
+    parser: (): object => {
       return document.cookie === ""
         ? {}
         : document.cookie
             .split("; ")
             .map(v => v.split("="))
-            .reduce((acc, v) => {
+            .reduce((acc: any, v: any) => {
               acc[decodeURIComponent(v[0].trim())] = decodeURIComponent(
                 v[1].trim()
               );
               return acc;
             }, {});
     },
-    set: (key, val) => {
-      document.cookie = `${encodeURIComponent(key)}=${decodeURIComponent(
-        val
-      )};Path=/;`;
+    set: (
+      key: string,
+      val: any,
+      parameters: Parameters = { path: "", expires: "" }
+    ): void => {
+      let string = `${encodeURIComponent(key)}=${decodeURIComponent(val)}`;
+      if (parameters.path !== "" || parameters.path !== undefined) {
+        string += `; path=${parameters.path}`;
+      } else {
+        string += "; path=/;";
+      }
+      if (parameters.expires !== "" && parameters.expires !== undefined) {
+        string += `; expires=${fnDate(parameters.expires)}`;
+      }
+      document.cookie = string;
     },
-    get: key => op.cookie.parser()[key],
-    unset: key => {
+    get: (key: string): any => op.cookie.parser()[key],
+    unset: (key: string): void => {
       document.cookie = `${encodeURIComponent(
         key
       )}=; expires=Thu, 01 Jan 1970 00:00:00 GMT;`;
     },
-    clear: () => {
+    clear: (): void => {
       mapper(op.cookie.parser(), op.cookie.unset);
     }
   }
 };
-const managers = Object.freeze({
-  c: "cookie",
-  l: "localstorage",
-  s: "sessionstorage",
-  cookie: "cookie",
-  localstorage: "localstorage",
-  sessionstorage: "sessionstorage"
-});
-export default function StorageManagerJs(manager = "cookie") {
+const normalize = (str: string): string => str.toLowerCase().trim();
+
+const getManager = (value: string): string => {
+  const manager = normalize(value);
+  const accept: boolean =
+    ["cookie", "localstorage", "sessionstorage"].filter(
+      x => x === manager
+    )[0] === manager;
+  return accept ? manager : normalize(Storages.cookie);
+};
+
+export default function StorageManagerJs(
+  manager: string = "cookie"
+): IStorageManager {
   if (!!Storage) {
-    manager = managers[manager.toLowerCase()] || "cookie";
+    manager = getManager(manager);
   } else {
     console.warn("Browser doesn't have support to Storage");
     manager = "cookie";
   }
-
   return Object.freeze({
     get,
     set,
@@ -108,19 +155,15 @@ export default function StorageManagerJs(manager = "cookie") {
     remove: unset,
     purge: clearAll
   });
-  function json() {
+  function json(): object {
     return op[manager].parser();
   }
-  function change(value = "cookie") {
-    if (has(managers, value)) {
-      manager = managers[value.toLowerCase().trim()];
-    } else {
-      manager = "cookie";
-    }
+  function change(value: string = "cookie"): IStorageManager {
+    manager = getManager(value);
     return this;
   }
-  function get(key, expect) {
-    let value = op[manager].get(key);
+  function get(key: string, expect?: string): any {
+    const value = op[manager].get(key);
     try {
       return expect === "raw" || expect === "r"
         ? value
@@ -131,23 +174,27 @@ export default function StorageManagerJs(manager = "cookie") {
       return value;
     }
   }
-  function set(key, value) {
+  function set(
+    key: string,
+    value: any,
+    parameters: Parameters
+  ): IStorageManager {
     if (isStr(value)) {
-      op[manager].set(key, value.trim());
+      op[manager].set(key, value.trim(), parameters);
     } else {
-      op[manager].set(key, JSON.stringify(value));
+      op[manager].set(key, JSON.stringify(value), parameters);
     }
     return this;
   }
-  function unset(key) {
+  function unset(key: string): IStorageManager {
     op[manager].unset(key);
     return this;
   }
-  function clear() {
+  function clear(): IStorageManager {
     op[manager].clear();
     return this;
   }
-  function clearAll() {
+  function clearAll(): IStorageManager {
     ["cookie", "localstorage", "sessionstorage"].forEach(x => op[x].clear());
     return this;
   }
