@@ -1,6 +1,6 @@
 {
 	"name": "storage-manager-js",
-	"version": "1.0.11",
+	"version": "1.0.13",
 	"description": "A little way to control Cookies, LocalStorage and SessionStorage without tears",
 	"main": "./src/index.js",
 	"keywords": [
@@ -22,5 +22,6 @@
 		"url": "https://github.com/vandalvnl/storage-manager"
 	},
 	"author": "Allan Garcez <vandal.vnl.dev@gmail.com> (https://github.com/vandalvnl)",
-	"license": "MIT"
+	"license": "MIT",
+	"dependencies": {}
 }
