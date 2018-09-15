@@ -1,11 +1,11 @@
 {
 	"compilerOptions": {
-		"module": "amd",
+		"module": "commonjs",
 		"noImplicitAny": true,
 		"removeComments": true,
 		"preserveConstEnums": true,
 		"sourceMap": true,
-		"lib": ["es2018", "dom"],
+		"lib": ["es7", "dom"],
 		"emitDecoratorMetadata": true
 	}
 }

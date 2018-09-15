@@ -95,12 +95,12 @@ const op: any = {
     ): void => {
       let string = `${encodeURIComponent(key)}=${decodeURIComponent(val)}`;
       if (parameters.path !== "" || parameters.path !== undefined) {
-        string += `; path=${parameters.path}`;
+        string += `;path=${parameters.path}`;
       } else {
-        string += "; path=/;";
+        string += ";path=/;";
       }
       if (parameters.expires !== "" && parameters.expires !== undefined) {
-        string += `; expires=${fnDate(parameters.expires)}`;
+        string += `;expires=${fnDate(parameters.expires)}`;
       }
       document.cookie = string;
     },
@@ -108,10 +108,14 @@ const op: any = {
     unset: (key: string): void => {
       document.cookie = `${encodeURIComponent(
         key
-      )}=; expires=Thu, 01 Jan 1970 00:00:00 GMT;`;
+      )}=;${new Date().toUTCString()}`;
     },
     clear: (): void => {
-      mapper(op.cookie.parser(), op.cookie.unset);
+      document.cookie.split(";").forEach(cookie => {
+        document.cookie = normalize(cookie)
+          .replace(/^ +/, "")
+          .replace(/=.*/, `=;expires=${new Date().toUTCString()};path=/`);
+      });
     }
   }
 };
@@ -119,11 +123,8 @@ const normalize = (str: string): string => str.toLowerCase().trim();
 
 const getManager = (value: string): string => {
   const manager = normalize(value);
-  const accept: boolean =
-    ["cookie", "localstorage", "sessionstorage"].filter(
-      x => x === manager
-    )[0] === manager;
-  return accept ? manager : normalize(Storages.cookie);
+  const array: Array<string> = ["cookie", "localstorage", "sessionstorage"];
+  return array.indexOf(manager) >= 0 ? manager : normalize(Storages.cookie);
 };
 
 export default function StorageManagerJs(
@@ -174,15 +175,11 @@ export default function StorageManagerJs(
       return value;
     }
   }
-  function set(
-    key: string,
-    value: any,
-    parameters: Parameters
-  ): IStorageManager {
-    if (isStr(value)) {
-      op[manager].set(key, value.trim(), parameters);
+  function set(key: string, val: any, params: Parameters): IStorageManager {
+    if (isStr(val)) {
+      op[manager].set(key, val.trim(), params);
     } else {
-      op[manager].set(key, JSON.stringify(value), parameters);
+      op[manager].set(key, JSON.stringify(val), params);
     }
     return this;
   }
