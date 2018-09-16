@@ -1,42 +1,44 @@
-interface Parameters {
+interface IParameters {
   path?: string;
   expires?: number | string;
 }
 
 interface IStorageManager {
-  get: Function;
-  set: Function;
-  json: Function;
-  clear: Function;
-  unset: Function;
-  change: Function;
-  clearAll: Function;
-  cat: Function;
-  all: Function;
-  item: Function;
-  rm: Function;
-  touch: Function;
-  create: Function;
-  getItem: Function;
-  setItem: Function;
-  delete: Function;
-  remove: Function;
-  purge: Function;
+  purge(): IStorageManager;
+  remove(key: string): IStorageManager;
+  delete(key: string): IStorageManager;
+  setItem(key: string, value: any, params?: IParameters): IStorageManager;
+  getItem(key: string): any;
+  create(key: string, value: any, params?: IParameters): IStorageManager;
+  touch(key: string, value: any, params?: IParameters): IStorageManager;
+  rm(key: string): IStorageManager;
+  item(key: string): any;
+  all(): any;
+  cat(): any;
+  clearAll(): IStorageManager;
+  change(manager: string): IStorageManager;
+  unset(key: string): IStorageManager;
+  get(key: string): IStorageManager;
+  set(key: string, value: any, params?: IParameters): IStorageManager;
+  json(): IStorageManager;
+  clear(key: string): IStorageManager;
 }
 
 const isStr = (value: any) =>
   typeof value === "string" || value instanceof String;
 
 const fnDate = (str: any) => {
-  let date: any = new Date();
+  const date: any = new Date();
   const integer: Date = new Date(date * 1 + str * 864e5);
   return !!parseInt(str, 10) ? integer : str;
 };
 
-const mapper = (object: object, callback: Function): void => {
+const mapper = (object: object, callback: any): void => {
   try {
     Object.keys(object).forEach(x => callback(x));
-  } catch (error) {}
+  } catch (error) {
+    window.console.log(error);
+  }
 };
 
 export const Storages = {
@@ -45,36 +47,19 @@ export const Storages = {
   sessionStorage: "sessionstorage"
 };
 
+const setExpires = (cookie: string) =>
+  cookie
+    .replace(/^ +/, "")
+    .replace(/=.*/, `=;expires=${new Date().toUTCString()};path=/`);
+
 const op: any = {
-  localstorage: {
-    parser: (): object => window.localStorage,
-    get: (key: string): any => window.localStorage.getItem(key),
-    set: (key: string, value: any): void =>
-      window.localStorage.setItem(key, value),
-    unset: (key: string): void => {
-      try {
-        window.localStorage.removeItem(key);
-      } catch (error) {}
-    },
-    clear: (): void => {
-      mapper(window.localStorage, op.localstorage.unset);
-    }
-  },
-  sessionstorage: {
-    parser: (): object => window.sessionStorage,
-    get: (key: string): any => window.sessionStorage.getItem(key),
-    set: (key: string, value: any): void =>
-      window.sessionStorage.setItem(key, value),
-    unset: (key: string): void => {
-      try {
-        window.sessionStorage.removeItem(key);
-      } catch (error) {}
-    },
-    clear: (): void => {
-      mapper(window.sessionStorage, op.sessionstorage.unset);
-    }
-  },
   cookie: {
+    clear: (): void => {
+      document.cookie.split(";").forEach(cookie => {
+        document.cookie = setExpires(cookie);
+      });
+    },
+    get: (key: string): any => op.cookie.parser()[key],
     parser: (): object => {
       return document.cookie === ""
         ? {}
@@ -91,31 +76,51 @@ const op: any = {
     set: (
       key: string,
       val: any,
-      parameters: Parameters = { path: "", expires: "" }
+      parameters: IParameters = {
+        expires: "1969-12-31T23:59:59.000Z",
+        path: "/"
+      }
     ): void => {
-      let string = `${encodeURIComponent(key)}=${decodeURIComponent(val)}`;
-      if (parameters.path !== "" || parameters.path !== undefined) {
-        string += `;path=${parameters.path}`;
-      } else {
-        string += ";path=/;";
-      }
-      if (parameters.expires !== "" && parameters.expires !== undefined) {
-        string += `;expires=${fnDate(parameters.expires)}`;
-      }
-      document.cookie = string;
+      document.cookie = `${encodeURIComponent(key)}=${decodeURIComponent(
+        val
+      )};path=${parameters.path};expires=${fnDate(parameters.expires)}`;
     },
-    get: (key: string): any => op.cookie.parser()[key],
     unset: (key: string): void => {
       document.cookie = `${encodeURIComponent(
         key
       )}=;${new Date().toUTCString()}`;
-    },
+    }
+  },
+  localstorage: {
     clear: (): void => {
-      document.cookie.split(";").forEach(cookie => {
-        document.cookie = normalize(cookie)
-          .replace(/^ +/, "")
-          .replace(/=.*/, `=;expires=${new Date().toUTCString()};path=/`);
-      });
+      mapper(window.localStorage, op.localstorage.unset);
+    },
+    get: (key: string): any => window.localStorage.getItem(key),
+    parser: (): object => window.localStorage,
+    set: (key: string, value: any): void =>
+      window.localStorage.setItem(key, value),
+    unset: (key: string): void => {
+      try {
+        window.localStorage.removeItem(key);
+      } catch (error) {
+        window.localStorage.removeItem("");
+      }
+    }
+  },
+  sessionstorage: {
+    clear: (): void => {
+      mapper(window.sessionStorage, op.sessionstorage.unset);
+    },
+    get: (key: string): any => window.sessionStorage.getItem(key),
+    parser: (): object => window.sessionStorage,
+    set: (key: string, value: any): void =>
+      window.sessionStorage.setItem(key, value),
+    unset: (key: string): void => {
+      try {
+        window.sessionStorage.removeItem(key);
+      } catch (error) {
+        window.sessionStorage.removeItem("");
+      }
     }
   }
 };
@@ -123,43 +128,43 @@ const normalize = (str: string): string => str.toLowerCase().trim();
 
 const getManager = (value: string): string => {
   const manager = normalize(value);
-  const array: Array<string> = ["cookie", "localstorage", "sessionstorage"];
+  const array: string[] = ["cookie", "localstorage", "sessionstorage"];
   return array.indexOf(manager) >= 0 ? manager : normalize(Storages.cookie);
 };
 
-export default function StorageManagerJs(
-  manager: string = "cookie"
-): IStorageManager {
+function StorageManagerJs(manager: string = "cookie"): any {
   if (!!Storage) {
     manager = getManager(manager);
   } else {
-    console.warn("Browser doesn't have support to Storage");
     manager = "cookie";
   }
   return Object.freeze({
-    get,
-    set,
-    json,
-    clear,
-    unset,
-    change,
-    clearAll,
-    cat: get,
     all: json,
-    item: get,
-    rm: unset,
-    touch: set,
+    cat: get,
+    change,
+    clear,
+    clearAll,
     create: set,
-    getItem: get,
-    setItem: set,
     delete: unset,
+    get,
+    getItem: get,
+    item: get,
+    json,
+    purge: clearAll,
     remove: unset,
-    purge: clearAll
+    rm: unset,
+    set,
+    setItem: set,
+    touch: set,
+    unset
   });
   function json(): object {
     return op[manager].parser();
   }
-  function change(value: string = "cookie"): IStorageManager {
+  function change(
+    this: IStorageManager,
+    value: string = "cookie"
+  ): IStorageManager {
     manager = getManager(value);
     return this;
   }
@@ -175,7 +180,12 @@ export default function StorageManagerJs(
       return value;
     }
   }
-  function set(key: string, val: any, params: Parameters): IStorageManager {
+  function set(
+    this: IStorageManager,
+    key: string,
+    val: any,
+    params?: IParameters
+  ): IStorageManager {
     if (isStr(val)) {
       op[manager].set(key, val.trim(), params);
     } else {
@@ -183,16 +193,17 @@ export default function StorageManagerJs(
     }
     return this;
   }
-  function unset(key: string): IStorageManager {
+  function unset(this: IStorageManager, key: string): IStorageManager {
     op[manager].unset(key);
     return this;
   }
-  function clear(): IStorageManager {
+  function clear(this: IStorageManager): IStorageManager {
     op[manager].clear();
     return this;
   }
-  function clearAll(): IStorageManager {
+  function clearAll(this: IStorageManager): IStorageManager {
     ["cookie", "localstorage", "sessionstorage"].forEach(x => op[x].clear());
     return this;
   }
 }
+export default StorageManagerJs;
