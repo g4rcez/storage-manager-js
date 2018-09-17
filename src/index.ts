@@ -14,13 +14,13 @@ interface IStorageManager {
   rm(key: string): IStorageManager;
   item(key: string): any;
   all(): any;
-  cat(): any;
+  cat(key: string): any;
   clearAll(): IStorageManager;
   change(manager: string): IStorageManager;
   unset(key: string): IStorageManager;
-  get(key: string): IStorageManager;
+  get(key: string): any;
   set(key: string, value: any, params?: IParameters): IStorageManager;
-  json(): IStorageManager;
+  json(): any;
   clear(key: string): IStorageManager;
 }
 
@@ -124,6 +124,7 @@ const op: any = {
     }
   }
 };
+
 const normalize = (str: string): string => str.toLowerCase().trim();
 
 const getManager = (value: string): string => {
@@ -132,13 +133,14 @@ const getManager = (value: string): string => {
   return array.indexOf(manager) >= 0 ? manager : normalize(Storages.cookie);
 };
 
-function StorageManagerJs(manager: string = "cookie"): any {
+function StorageManagerJs(manager: string = "cookie"): IStorageManager {
   if (!!Storage) {
     manager = getManager(manager);
   } else {
     manager = "cookie";
   }
-  return Object.freeze({
+  
+  return {
     all: json,
     cat: get,
     change,
@@ -157,10 +159,12 @@ function StorageManagerJs(manager: string = "cookie"): any {
     setItem: set,
     touch: set,
     unset
-  });
-  function json(): object {
+  }
+
+  function json(): any {
     return op[manager].parser();
   }
+
   function change(
     this: IStorageManager,
     value: string = "cookie"
@@ -168,6 +172,7 @@ function StorageManagerJs(manager: string = "cookie"): any {
     manager = getManager(value);
     return this;
   }
+  
   function get(key: string, expect?: string): any {
     const value = op[manager].get(key);
     try {
@@ -180,6 +185,7 @@ function StorageManagerJs(manager: string = "cookie"): any {
       return value;
     }
   }
+  
   function set(
     this: IStorageManager,
     key: string,
@@ -193,14 +199,17 @@ function StorageManagerJs(manager: string = "cookie"): any {
     }
     return this;
   }
+  
   function unset(this: IStorageManager, key: string): IStorageManager {
     op[manager].unset(key);
     return this;
   }
+  
   function clear(this: IStorageManager): IStorageManager {
     op[manager].clear();
     return this;
   }
+  
   function clearAll(this: IStorageManager): IStorageManager {
     ["cookie", "localstorage", "sessionstorage"].forEach(x => op[x].clear());
     return this;
