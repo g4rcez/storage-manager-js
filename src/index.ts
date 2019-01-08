@@ -9,21 +9,22 @@ export { default as SessionStorage } from "./storages/SessionStorage";
 export const Storages = { ...StorageTypes };
 
 type Managers = {
-    [key: string]: IStorage;
+    cookie(): IStorage;
+    localstorage(): IStorage;
+    sessionstorage(): IStorage;
 };
 
 const normalize = (str: string): string => str.toLowerCase().trim();
 const managers: Managers = {
-    cookie: new Cookie(),
-    localstorage: new LocalStorage(),
-    sessionstorage: new SessionStorage(),
+    cookie: () => new Cookie(),
+    localstorage: () => new LocalStorage(),
+    sessionstorage: () => new SessionStorage(),
 };
 
 const getManager = (value: string): IStorage => {
     const manager = normalize(value);
     return managers[manager];
 };
-
 
 export function StorageManagerJs(managerName: string = "cookie"): IStorageManager {
     const manager = getManager(managerName);
