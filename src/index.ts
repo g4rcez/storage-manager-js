@@ -9,40 +9,41 @@ export { default as SessionStorage } from "./storages/SessionStorage";
 export const Storages = { ...StorageTypes };
 
 type Managers = {
-    cookie(): IStorage;
-    localstorage(): IStorage;
-    sessionstorage(): IStorage;
+	cookie(): IStorage;
+	localstorage(): IStorage;
+	sessionstorage(): IStorage;
 };
 
-const normalize = (str: string): string => str.toLowerCase().trim();
+function normalize(str: string) {
+	return str.toLowerCase().trim();
+}
 const managers: Managers = {
-    cookie: () => new Cookie(),
-    localstorage: () => new LocalStorage(),
-    sessionstorage: () => new SessionStorage(),
+	cookie: () => new Cookie(),
+	localstorage: () => new LocalStorage(),
+	sessionstorage: () => new SessionStorage(),
 };
 
-const getManager = (value: string): IStorage => {
-    const manager = normalize(value);
-    return managers[manager];
-};
+function getManager(value: string): IStorage {
+	return managers[normalize(value)];
+}
 
 export function StorageManagerJs(managerName: string = "cookie"): IStorageManager {
-    const manager = getManager(managerName);
-    return {
-        all: () => manager.parser(),
-        json: () => manager.parser(),
-        cat: (key: string) => manager.get(key),
-        get: (key: string) => manager.get(key),
-        item: (key: string) => manager.get(key),
-        getItem: (key: string) => manager.get(key),
-        clear: (key) => manager.unset(key),
-        rm: (key: string) => manager.unset(key),
-        unset: (key: string) => manager.unset(key),
-        delete: (key: string) => manager.unset(key),
-        remove: (key: string) => manager.unset(key),
-        set: (key: string, value: any, params?: IParameters) => manager.set(key, value, params),
-        touch: (key: string, value: any, params?: IParameters) => manager.set(key, value, params),
-        create: (key: string, value: any, params?: IParameters) => manager.set(key, value, params),
-        setItem: (key: string, value: any, params?: IParameters) => manager.set(key, value, params),
-    };
+	const manager = getManager(managerName);
+	return Object.freeze({
+		all: () => manager.parser(),
+		cat: (key: string) => manager.get(key),
+		clear: (key: string) => manager.unset(key),
+		create: (key: string, value: any, params?: IParameters) => manager.set(key, value, params),
+		delete: (key: string) => manager.unset(key),
+		get: (key: string) => manager.get(key),
+		getItem: (key: string) => manager.get(key),
+		item: (key: string) => manager.get(key),
+		json: () => JSON.stringify(manager.parser()),
+		remove: (key: string) => manager.unset(key),
+		rm: (key: string) => manager.unset(key),
+		set: (key: string, value: any, params?: IParameters) => manager.set(key, value, params),
+		setItem: (key: string, value: any, params?: IParameters) => manager.set(key, value, params),
+		touch: (key: string, value: any, params?: IParameters) => manager.set(key, value, params),
+		unset: (key: string) => manager.unset(key),
+	});
 }
