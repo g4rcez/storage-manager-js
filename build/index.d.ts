@@ -1,32 +1,11 @@
-interface IParameters {
-    path?: string;
-    expires?: number | string;
-}
-interface IStorageManager {
-    purge(): IStorageManager;
-    remove(key: string): IStorageManager;
-    delete(key: string): IStorageManager;
-    setItem(key: string, value: any, params?: IParameters): IStorageManager;
-    getItem(key: string): any;
-    create(key: string, value: any, params?: IParameters): IStorageManager;
-    touch(key: string, value: any, params?: IParameters): IStorageManager;
-    rm(key: string): IStorageManager;
-    item(key: string): any;
-    all(): any;
-    cat(key: string): any;
-    clearAll(): IStorageManager;
-    change(manager: string): IStorageManager;
-    unset(key: string): IStorageManager;
-    get(key: string): any;
-    set(key: string, value: any, params?: IParameters): IStorageManager;
-    json(): any;
-    clear(key: string): IStorageManager;
-}
+import { IStorageManager } from "./types";
+export { default as Cookie } from "./storages/Cookie";
+export { default as LocalStorage } from "./storages/LocalStorage";
+export { default as SessionStorage } from "./storages/SessionStorage";
 export declare const Storages: {
     cookie: string;
     localStorage: string;
     sessionStorage: string;
 };
-declare function StorageManagerJs(manager?: string): IStorageManager;
-export default StorageManagerJs;
+export declare function StorageManagerJs(managerName?: string): IStorageManager;
 //# sourceMappingURL=index.d.ts.map

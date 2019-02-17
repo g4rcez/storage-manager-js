@@ -12,9 +12,8 @@ var SessionStorage = /** @class */ (function () {
         return this;
     };
     SessionStorage.prototype.get = function (key) {
-        var string = window.sessionStorage.getItem(key);
+        var string = window.sessionStorage.getItem(key) || "";
         try {
-            // @ts-ignore
             return JSON.parse(string);
         }
         catch (error) {
@@ -30,7 +29,7 @@ var SessionStorage = /** @class */ (function () {
         }
         return this;
     };
-    SessionStorage.prototype.set = function (key, object, parameters) {
+    SessionStorage.prototype.set = function (key, object) {
         window.sessionStorage.setItem(key, JSON.stringify(object));
         return this;
     };

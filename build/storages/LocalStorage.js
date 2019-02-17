@@ -14,7 +14,6 @@ var LocalStorage = /** @class */ (function () {
     LocalStorage.prototype.get = function (key) {
         var string = window.localStorage.getItem(key) || "";
         try {
-            // @ts-ignore
             return JSON.parse(string);
         }
         catch (error) {
@@ -30,7 +29,7 @@ var LocalStorage = /** @class */ (function () {
         }
         return this;
     };
-    LocalStorage.prototype.set = function (key, object, parameters) {
+    LocalStorage.prototype.set = function (key, object) {
         window.localStorage.setItem(key, JSON.stringify(object));
         return this;
     };

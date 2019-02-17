@@ -1,19 +1,21 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("./../utils");
+var defaultParams = { path: "/", expires: "1969-12-31T23:59:59.000Z" };
 var Cookie = /** @class */ (function () {
     function Cookie() {
     }
     Cookie.prototype.parser = function () {
-        return document.cookie === ""
-            ? {}
-            : document.cookie
-                .split("; ")
-                .map(function (v) { return v.split("="); })
-                .reduce(function (acc, v) {
-                acc[decodeURIComponent(v[0].trim())] = decodeURIComponent(v[1].trim());
-                return acc;
-            }, {});
+        if (document.cookie === "") {
+            return {};
+        }
+        return document.cookie
+            .split("; ")
+            .map(function (v) { return v.split("="); })
+            .reduce(function (acc, v) {
+            acc[decodeURIComponent(v[0].trim())] = decodeURIComponent(v[1].trim());
+            return acc;
+        }, {});
     };
     Cookie.prototype.clear = function () {
         document.cookie.split(";").forEach(function (cookie) {
@@ -22,12 +24,12 @@ var Cookie = /** @class */ (function () {
         return this;
     };
     Cookie.prototype.get = function (key) {
-        var string = this.parser()[key];
+        var value = this.parser()[key];
         try {
-            return JSON.parse(string);
+            return JSON.parse(value);
         }
         catch (error) {
-            return JSON.parse(string);
+            return value;
         }
     };
     Cookie.prototype.unset = function (key) {
@@ -35,16 +37,8 @@ var Cookie = /** @class */ (function () {
         return this;
     };
     Cookie.prototype.set = function (key, object, parameters) {
-        var path = "/";
-        var expires = "1969-12-31T23:59:59.000Z";
-        if (parameters) {
-            if (parameters.path) {
-                path = parameters.path;
-            }
-            if (parameters.expires) {
-                expires = "" + parameters.expires;
-            }
-        }
+        if (parameters === void 0) { parameters = defaultParams; }
+        var expires = parameters.expires, path = parameters.path;
         document.cookie = encodeURIComponent(key) + "=" + decodeURIComponent(JSON.stringify(object)) + ";path=" + path + ";expires=" + utils_1.fnDate(expires);
         return this;
     };
