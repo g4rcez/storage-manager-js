@@ -1,8 +1,13 @@
 {
 	"name": "storage-manager-js",
-	"version": "2.0.0",
+	"version": "2.0.1",
 	"description": "A little way to control Cookies, LocalStorage and SessionStorage without tears",
 	"main": "./build/index.js",
+	"scripts": {
+		"format": "prettier --write '{.,src/**}/*.{js,jsx,ts,tsx}'",
+		"build": "tsc -b",
+		"publish": "bash publish.sh"
+	},
 	"keywords": [
 		"cookie",
 		"cookies",
@@ -23,5 +28,8 @@
 	},
 	"author": "Allan Garcez <vandal.vnl.dev@gmail.com> (https://github.com/vandalvnl)",
 	"license": "MIT",
-	"dependencies": {}
+	"dependencies": {},
+	"devDependencies": {
+		"prettier": "^1.16.4"
+	}
 }
