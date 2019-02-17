@@ -1,7 +1,7 @@
 import { IParameters, IStorage } from "./../types";
 import { setExpires, fnDate } from "./../utils";
 
-const defaultParams = {path:"/","expires":"1969-12-31T23:59:59.000Z"}
+const defaultParams = { path: "/", expires: "1969-12-31T23:59:59.000Z" };
 export default class Cookie implements IStorage {
 	parser() {
 		if (document.cookie === "") {
@@ -26,7 +26,7 @@ export default class Cookie implements IStorage {
 		try {
 			return JSON.parse(value);
 		} catch (error) {
-			return value
+			return value;
 		}
 	}
 	unset(key: string): IStorage {
@@ -34,7 +34,7 @@ export default class Cookie implements IStorage {
 		return this;
 	}
 	set(key: string, object: any, parameters: IParameters = defaultParams): IStorage {
-        const {expires,path} = parameters
+		const { expires, path } = parameters;
 		document.cookie = `${encodeURIComponent(key)}=${decodeURIComponent(
 			JSON.stringify(object),
 		)};path=${path};expires=${fnDate(expires)}`;
