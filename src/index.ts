@@ -2,7 +2,6 @@ import { IStorage, IStorageManager, Storages as StorageTypes, IParameters } from
 import Cookie from "./storages/Cookie";
 import LocalStorage from "./storages/LocalStorage";
 import SessionStorage from "./storages/SessionStorage";
-
 export { default as Cookie } from "./storages/Cookie";
 export { default as LocalStorage } from "./storages/LocalStorage";
 export { default as SessionStorage } from "./storages/SessionStorage";
