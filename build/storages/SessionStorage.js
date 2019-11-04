@@ -12,12 +12,12 @@ var SessionStorage = /** @class */ (function () {
         return this;
     };
     SessionStorage.prototype.get = function (key) {
-        var string = window.sessionStorage.getItem(key) || "";
+        var str = window.sessionStorage.getItem(key) || "";
         try {
-            return JSON.parse(string);
+            return JSON.parse(str);
         }
         catch (error) {
-            return string;
+            return str;
         }
     };
     SessionStorage.prototype.unset = function (key) {

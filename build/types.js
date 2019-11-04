@@ -1,8 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Storages = {
-    cookie: "cookie",
-    localStorage: "localstorage",
-    sessionStorage: "sessionstorage",
-};
+var Storages;
+(function (Storages) {
+    Storages["Cookie"] = "cookie";
+    Storages["LocalStorage"] = "localstorage";
+    Storages["SessionStorage"] = "sessionstorage";
+})(Storages = exports.Storages || (exports.Storages = {}));
 //# sourceMappingURL=types.js.map

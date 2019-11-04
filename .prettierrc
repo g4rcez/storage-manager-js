@@ -7,7 +7,7 @@
     "endOfLine": "auto",
     "tabWidth": 4,
     "useTabs": true,
-    "printWidth": 120,
+    "printWidth": 150,
     "jsxSingleQuote": false,
     "bracketSpacing": true,
     "htmlWhitespaceSensitivity": "css",

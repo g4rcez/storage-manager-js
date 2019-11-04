@@ -14,7 +14,4 @@ exports.map = function (object, callback) {
         window.console.log(error);
     }
 };
-exports.setExpires = function (cookie) {
-    return cookie.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-};
 //# sourceMappingURL=utils.js.map

@@ -12,12 +12,12 @@ var LocalStorage = /** @class */ (function () {
         return this;
     };
     LocalStorage.prototype.get = function (key) {
-        var string = window.localStorage.getItem(key) || "";
+        var str = window.localStorage.getItem(key) || "";
         try {
-            return JSON.parse(string);
+            return JSON.parse(str);
         }
         catch (error) {
-            return string;
+            return str;
         }
     };
     LocalStorage.prototype.unset = function (key) {
