@@ -13,6 +13,3 @@ export const map = (object: object, callback: any): void => {
 		window.console.log(error);
 	}
 };
-
-export const setExpires = (cookie: string) =>
-	cookie.replace(/^ +/, "").replace(/=.*/, `=;expires=${new Date().toUTCString()};path=/`);
