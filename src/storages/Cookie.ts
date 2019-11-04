@@ -1,13 +1,16 @@
-import { IParameters, IStorage } from "./../types";
-import { setExpires, fnDate } from "./../utils";
+import { IParameters, IStorage } from "../types";
+import { fnDate } from "../utils";
 
-const defaultParams = { path: "/", expires: "1969-12-31T23:59:59.000Z" };
+export const expire = (cookie: string) => cookie.replace(/^ +/, "").replace(/=.*/, `=;expires=${new Date().toUTCString()};path=/`);
+
+const defaultParams = { path: "/", expires: "1969-12-31T23:59:59.000Z", domain: window.location.hostname };
 export default class Cookie implements IStorage {
-	parser() {
-		if (document.cookie === "") {
+	public parser() {
+		const cookie = document.cookie;
+		if (cookie === "") {
 			return {};
 		}
-		return document.cookie
+		return cookie
 			.split("; ")
 			.map((v) => v.split("="))
 			.reduce((acc: any, v: any) => {
@@ -15,13 +18,13 @@ export default class Cookie implements IStorage {
 				return acc;
 			}, {});
 	}
-	clear(): IStorage {
+	public clear(): IStorage {
 		document.cookie.split(";").forEach((cookie) => {
-			document.cookie = setExpires(cookie);
+			document.cookie = expire(cookie);
 		});
 		return this;
 	}
-	get(key: string) {
+	public get(key: string) {
 		const value = this.parser()[key];
 		try {
 			return JSON.parse(value);
@@ -29,15 +32,15 @@ export default class Cookie implements IStorage {
 			return value;
 		}
 	}
-	unset(key: string): IStorage {
-		document.cookie = `${encodeURIComponent(key)}=;${new Date().toUTCString()}`;
+	public unset(key: string): IStorage {
+		document.cookie = `${encodeURIComponent(key)}=;expires=${new Date().toUTCString()}`;
 		return this;
 	}
-	set(key: string, object: any, parameters: IParameters = defaultParams): IStorage {
+	public set(key: string, object: any, parameters: IParameters = defaultParams): IStorage {
 		const { expires, path } = parameters;
-		document.cookie = `${encodeURIComponent(key)}=${decodeURIComponent(
-			JSON.stringify(object),
-		)};path=${path};expires=${fnDate(expires)}`;
+		document.cookie = `${encodeURIComponent(key)}=${decodeURIComponent(JSON.stringify(object))}; path=${path}; expires=${fnDate(
+			expires,
+		)};secure; SameSite=strict`;
 		return this;
 	}
 }
