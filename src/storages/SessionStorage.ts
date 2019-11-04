@@ -2,22 +2,22 @@ import { IStorage } from "../types";
 import { map } from "../utils";
 
 export default class SessionStorage implements IStorage {
-	parser() {
+	public parser() {
 		return window.sessionStorage;
 	}
-	clear(): IStorage {
+	public clear(): IStorage {
 		map(window.sessionStorage, this.unset);
 		return this;
 	}
-	get(key: string) {
-		const string = window.sessionStorage.getItem(key) || "";
+	public get(key: string) {
+		const str = window.sessionStorage.getItem(key) || "";
 		try {
-			return JSON.parse(string);
+			return JSON.parse(str);
 		} catch (error) {
-			return string;
+			return str;
 		}
 	}
-	unset(key: string): IStorage {
+	public unset(key: string): IStorage {
 		try {
 			window.sessionStorage.removeItem(key);
 		} catch (error) {
@@ -25,7 +25,7 @@ export default class SessionStorage implements IStorage {
 		}
 		return this;
 	}
-	set(key: string, object: any): IStorage {
+	public set(key: string, object: any): IStorage {
 		window.sessionStorage.setItem(key, JSON.stringify(object));
 		return this;
 	}
