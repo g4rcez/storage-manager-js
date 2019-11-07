@@ -38,9 +38,10 @@ export default class Cookie implements IStorage {
 	}
 	public set(key: string, object: any, parameters: IParameters = defaultParams): IStorage {
 		const { expires, path } = parameters;
+		const useSecure = window.location.protocol === "https" ? ";secure" : ";";
 		document.cookie = `${encodeURIComponent(key)}=${decodeURIComponent(JSON.stringify(object))};path=${path};expires=${fnDate(
 			expires,
-		)};samesite=strict;secure`;
+		)};samesite=strict${useSecure}`;
 		return this;
 	}
 }

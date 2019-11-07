@@ -5,8 +5,7 @@
 	"main": "./build/index.js",
 	"scripts": {
 		"format": "prettier --write '{.,src/**}/*.{js,jsx,ts,tsx}'",
-		"build": "tsc -b",
-		"publish": "bash publish.sh"
+		"build": "tsc -b"
 	},
 	"keywords": [
 		"cookie",
