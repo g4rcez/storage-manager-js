@@ -1,4 +1,4 @@
-import { IStorage } from "./../types";
+import { IStorage } from "../types";
 export default class LocalStorage implements IStorage {
     parser(): Storage;
     clear(): IStorage;

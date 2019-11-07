@@ -28,20 +28,20 @@ type managersAccept = "cookie" | "localStorage" | "sessionStorage";
 export function StorageManagerJs(managerName: managersAccept = "cookie"): IStorageManager {
 	const manager = getManager(managerName);
 	return Object.freeze({
-		all: manager.parser,
-		cat: manager.get,
-		clear: manager.unset,
+		all: () => manager.parser(),
+		cat: (key: string) => manager.get(key),
+		clear: (key: string) => manager.unset(key),
 		create: (key: string, value: any, params?: IParameters) => manager.set(key, value, params),
-		delete: manager.unset,
-		get: manager.get,
-		getItem: manager.get,
-		item: manager.get,
+		delete: (key: string) => manager.unset(key),
+		get: (key: string) => manager.get(key),
+		getItem: (key: string) => manager.get(key),
+		item: (key: string) => manager.get(key),
 		json: () => JSON.stringify(manager.parser()),
-		remove: manager.unset,
-		rm: manager.unset,
+		remove: (key: string) => manager.unset(key),
+		rm: (key: string) => manager.unset(key),
 		set: (key: string, value: any, params?: IParameters) => manager.set(key, value, params),
 		setItem: (key: string, value: any, params?: IParameters) => manager.set(key, value, params),
 		touch: (key: string, value: any, params?: IParameters) => manager.set(key, value, params),
-		unset: manager.unset,
+		unset: (key: string) => manager.unset(key),
 	});
 }

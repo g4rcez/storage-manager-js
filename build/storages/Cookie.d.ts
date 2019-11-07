@@ -1,4 +1,5 @@
-import { IParameters, IStorage } from "./../types";
+import { IParameters, IStorage } from "../types";
+export declare const expire: (cookie: string) => string;
 export default class Cookie implements IStorage {
     parser(): any;
     clear(): IStorage;

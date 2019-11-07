@@ -22,21 +22,21 @@ function StorageManagerJs(managerName) {
     if (managerName === void 0) { managerName = "cookie"; }
     var manager = getManager(managerName);
     return Object.freeze({
-        all: manager.parser,
-        cat: manager.get,
-        clear: manager.unset,
+        all: function () { return manager.parser(); },
+        cat: function (key) { return manager.get(key); },
+        clear: function (key) { return manager.unset(key); },
         create: function (key, value, params) { return manager.set(key, value, params); },
-        delete: manager.unset,
-        get: manager.get,
-        getItem: manager.get,
-        item: manager.get,
+        delete: function (key) { return manager.unset(key); },
+        get: function (key) { return manager.get(key); },
+        getItem: function (key) { return manager.get(key); },
+        item: function (key) { return manager.get(key); },
         json: function () { return JSON.stringify(manager.parser()); },
-        remove: manager.unset,
-        rm: manager.unset,
+        remove: function (key) { return manager.unset(key); },
+        rm: function (key) { return manager.unset(key); },
         set: function (key, value, params) { return manager.set(key, value, params); },
         setItem: function (key, value, params) { return manager.set(key, value, params); },
         touch: function (key, value, params) { return manager.set(key, value, params); },
-        unset: manager.unset,
+        unset: function (key) { return manager.unset(key); },
     });
 }
 exports.StorageManagerJs = StorageManagerJs;

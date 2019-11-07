@@ -41,7 +41,7 @@ var Cookie = /** @class */ (function () {
     Cookie.prototype.set = function (key, object, parameters) {
         if (parameters === void 0) { parameters = defaultParams; }
         var expires = parameters.expires, path = parameters.path;
-        document.cookie = encodeURIComponent(key) + "=" + decodeURIComponent(JSON.stringify(object)) + "; path=" + path + "; expires=" + utils_1.fnDate(expires) + ";secure; SameSite=strict";
+        document.cookie = encodeURIComponent(key) + "=" + decodeURIComponent(JSON.stringify(object)) + ";path=" + path + ";expires=" + utils_1.fnDate(expires) + ";samesite=strict;secure";
         return this;
     };
     return Cookie;

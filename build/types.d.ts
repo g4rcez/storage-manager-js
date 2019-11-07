@@ -1,8 +1,8 @@
-export declare type IParameters = {
+export interface IParameters {
     expires?: number | string;
     path?: string;
-};
-export declare type IStorageManager = {
+}
+export interface IStorageManager {
     all(): any;
     cat(key: string): any;
     clear(key: string): IStorage;
@@ -18,12 +18,12 @@ export declare type IStorageManager = {
     setItem(key: string, value: any, params?: IParameters): IStorage;
     touch(key: string, value: any, params?: IParameters): IStorage;
     unset(key: string): IStorage;
-};
-export declare const Storages: {
-    cookie: string;
-    localStorage: string;
-    sessionStorage: string;
-};
+}
+export declare enum Storages {
+    Cookie = "cookie",
+    LocalStorage = "localstorage",
+    SessionStorage = "sessionstorage"
+}
 export interface IStorage {
     clear(): IStorage;
     get(key: string): any;
