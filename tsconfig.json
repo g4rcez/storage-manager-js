@@ -2,14 +2,18 @@
   "compilerOptions": {
     "baseUrl": ".",
     "outDir": "build/",
-    "module": "commonjs",
+    "module": "CommonJS",
     "target": "es5",
     "lib": [
       "dom",
       "esnext"
     ],
-    "sourceMap": true,
-    "jsx": "react",
+    "alwaysStrict": true,
+    "declaration": true,
+    "declarationMap": false,
+    "downlevelIteration": true,
+    "stripInternal": true,
+    "sourceMap": false,
     "moduleResolution": "node",
     "rootDir": "src",
     "forceConsistentCasingInFileNames": true,

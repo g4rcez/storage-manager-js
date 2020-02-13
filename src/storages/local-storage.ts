@@ -1,11 +1,14 @@
 import { IStorage } from "../types";
 import { map } from "../utils";
 export default class LocalStorage implements IStorage {
-	public parser() {
+	public has(key: string) {
+		return window.localStorage.getItem(key) !== undefined;
+	}
+	public json() {
 		return window.localStorage;
 	}
-	public clear(): IStorage {
-		map(window.localStorage, this.unset);
+	public deleteAll(): IStorage {
+		map(window.localStorage, this.delete);
 		return this;
 	}
 	public get(key: string) {
@@ -16,7 +19,7 @@ export default class LocalStorage implements IStorage {
 			return str;
 		}
 	}
-	public unset(key: string): IStorage {
+	public delete(key: string): IStorage {
 		try {
 			window.localStorage.removeItem(key);
 		} catch (error) {

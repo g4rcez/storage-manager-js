@@ -2,11 +2,14 @@ import { IStorage } from "../types";
 import { map } from "../utils";
 
 export default class SessionStorage implements IStorage {
-	public parser() {
+	public has(key: string) {
+		return window.sessionStorage.getItem(key) !== undefined;
+	}
+	public json() {
 		return window.sessionStorage;
 	}
-	public clear(): IStorage {
-		map(window.sessionStorage, this.unset);
+	public deleteAll(): IStorage {
+		map(window.sessionStorage, this.delete);
 		return this;
 	}
 	public get(key: string) {
@@ -17,7 +20,7 @@ export default class SessionStorage implements IStorage {
 			return str;
 		}
 	}
-	public unset(key: string): IStorage {
+	public delete(key: string): IStorage {
 		try {
 			window.sessionStorage.removeItem(key);
 		} catch (error) {

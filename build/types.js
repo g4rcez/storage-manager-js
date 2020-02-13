@@ -6,4 +6,3 @@ var Storages;
     Storages["LocalStorage"] = "localstorage";
     Storages["SessionStorage"] = "sessionstorage";
 })(Storages = exports.Storages || (exports.Storages = {}));
-//# sourceMappingURL=types.js.map

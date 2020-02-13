@@ -2,3 +2,4 @@ node_modules
 .sizecache.json
 *.log*
 cache/
+build/

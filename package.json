@@ -29,7 +29,8 @@
 	"license": "MIT",
 	"dependencies": {},
 	"devDependencies": {
-		"prettier": "^1.16.4",
-		"tslint-config-prettier": "^1.18.0"
+		"prettier": "^1.19.1",
+		"tslint-config-prettier": "^1.18.0",
+		"typescript": "^3.7.5"
 	}
 }
