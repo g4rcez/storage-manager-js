@@ -8,8 +8,8 @@ export type CookieSettings = Partial<{
 export interface IStorage {
 	delete(key: string): IStorage;
 	deleteAll(): IStorage;
-	get(key: string): any;
+	get<T>(key: string): T | string | undefined;
 	has(key: string): boolean;
-	json(): any;
+	json<T>(): T;
 	set(key: string, object: any, parameters?: CookieSettings): IStorage;
 }

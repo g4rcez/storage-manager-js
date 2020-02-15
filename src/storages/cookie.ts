@@ -27,10 +27,10 @@ export default class Cookie<T> implements IStorage {
 		});
 	}
 
-	public static get<E>(key: string) {
+	public static get<E>(key: string): E | string {
 		const value = Cookie.json<E>()[key];
 		try {
-			return JSON.parse(value);
+			return JSON.parse(value) as E;
 		} catch (error) {
 			return value;
 		}
@@ -51,8 +51,8 @@ export default class Cookie<T> implements IStorage {
 		return Cookie.has(key);
 	}
 
-	public json(): T | {} {
-		return Cookie.json<T>();
+	public json<T>() {
+		return Cookie.json<T>() as T;
 	}
 
 	public deleteAll(): IStorage {
@@ -60,10 +60,10 @@ export default class Cookie<T> implements IStorage {
 		return this;
 	}
 
-	public get(key: string) {
-		Cookie.get(key);
-		return this;
+	public get<T>(key: string): T | string {
+		return Cookie.get(key);
 	}
+
 	public delete(key: string): IStorage {
 		Cookie.delete(key);
 		return this;

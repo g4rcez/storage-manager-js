@@ -1,19 +1,23 @@
 import { IStorage } from "../types";
 import { map } from "../utils";
+
 export default class LocalStorage implements IStorage {
 	public static has(key: string) {
 		return window.localStorage.getItem(key) !== undefined;
 	}
-	public static json() {
-		return window.localStorage;
+
+	public static json<T>() {
+		return (window.localStorage as unknown) as T;
 	}
+
 	public static deleteAll() {
 		map(window.localStorage, this.delete);
 	}
-	public static get(key: string) {
+
+	public static get<T>(key: string) {
 		const str: string = window.localStorage.getItem(key) || "";
 		try {
-			return JSON.parse(str);
+			return JSON.parse(str) as T;
 		} catch (error) {
 			return str;
 		}
@@ -22,7 +26,7 @@ export default class LocalStorage implements IStorage {
 	public static delete(key: string) {
 		window.localStorage.removeItem(key);
 	}
-	
+
 	public static set(key: string, object: any) {
 		window.localStorage.setItem(key, JSON.stringify(object));
 	}
@@ -31,8 +35,8 @@ export default class LocalStorage implements IStorage {
 		return LocalStorage.has(key);
 	}
 
-	public json() {
-		return LocalStorage.json();
+	public json<T>() {
+		return (LocalStorage.json() as unknown) as T;
 	}
 
 	public deleteAll(): IStorage {
@@ -40,8 +44,8 @@ export default class LocalStorage implements IStorage {
 		return this;
 	}
 
-	public get(key: string) {
-		return LocalStorage.get(key);
+	public get<T>(key: string) {
+		return LocalStorage.get(key) as T;
 	}
 
 	public delete(key: string): IStorage {

@@ -5,18 +5,18 @@ export default class SessionStorage implements IStorage {
 	public static has(key: string) {
 		return window.sessionStorage.getItem(key) !== undefined;
 	}
-	public static json() {
-		return window.sessionStorage;
+	public static json<T>() {
+		return (window.sessionStorage as unknown) as T;
 	}
 
 	public static deleteAll() {
 		map(window.sessionStorage, this.delete);
 	}
 
-	public static get(key: string) {
+	public static get<T>(key: string) {
 		const str = window.sessionStorage.getItem(key) || "";
 		try {
-			return JSON.parse(str);
+			return JSON.parse(str) as T;
 		} catch (error) {
 			return str;
 		}
@@ -34,8 +34,8 @@ export default class SessionStorage implements IStorage {
 		return SessionStorage.has(key);
 	}
 
-	public json() {
-		return window.sessionStorage;
+	public json<T>() {
+		return (window.sessionStorage as unknown) as T;
 	}
 
 	public deleteAll() {
@@ -43,8 +43,8 @@ export default class SessionStorage implements IStorage {
 		return this;
 	}
 
-	public get(key: string) {
-		return SessionStorage.get(key);
+	public get<T>(key: string) {
+		return SessionStorage.get(key) as T;
 	}
 	public delete(key: string): IStorage {
 		SessionStorage.delete(key);
