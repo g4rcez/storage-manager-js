@@ -39,7 +39,15 @@ export default class Cookie<T> implements IStorage {
 		document.cookie = `${encodeURIComponent(key)}=;expires=${new Date().toUTCString()}`;
 	}
 
-	public static set(key: string, object: any, { expires = "1969-12-31T23:59:59.000Z", path = "/", useSecure = true }: CookieSettings) {
+	public static set(
+		key: string,
+		object: any,
+		{ expires = "1969-12-31T23:59:59.000Z", path = "/", useSecure = true }: CookieSettings = {
+			expires: "1969-12-31T23:59:59.000Z",
+			path: "/",
+			useSecure: true,
+		},
+	) {
 		const secure = window.location.protocol === "https" ? ";secure" : useSecure ? ";secure" : ";";
 		const exp = fnDate(expires);
 		const value = encodeURIComponent(JSON.stringify(object));

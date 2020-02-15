@@ -51,7 +51,7 @@ export default class SessionStorage implements IStorage {
 		return this;
 	}
 	public set(key: string, object: any): IStorage {
-		SessionStorage.set(key, JSON.stringify(object));
+		SessionStorage.set(key, object);
 		return this;
 	}
 }

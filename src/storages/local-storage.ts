@@ -54,7 +54,7 @@ export default class LocalStorage implements IStorage {
 	}
 
 	public set(key: string, object: any): IStorage {
-		window.localStorage.setItem(key, JSON.stringify(object));
+		window.localStorage.setItem(key, object);
 		return this;
 	}
 }
