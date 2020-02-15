@@ -8,6 +8,7 @@
       "dom",
       "esnext"
     ],
+    "incremental": false,
     "alwaysStrict": true,
     "declaration": true,
     "declarationMap": false,

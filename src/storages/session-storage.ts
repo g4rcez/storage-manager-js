@@ -46,10 +46,12 @@ export default class SessionStorage implements IStorage {
 	public get<T>(key: string) {
 		return SessionStorage.get(key) as T;
 	}
+
 	public delete(key: string): IStorage {
 		SessionStorage.delete(key);
 		return this;
 	}
+
 	public set(key: string, object: any): IStorage {
 		SessionStorage.set(key, object);
 		return this;
