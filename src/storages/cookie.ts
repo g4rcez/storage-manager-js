@@ -2,10 +2,8 @@ import { CookieSettings, IStorage } from "../types";
 import { fnDate } from "../utils";
 
 export default class Cookie<T> implements IStorage {
-	private static cookiesArray = () => document.cookie.split(";");
-
 	public static has(key: string) {
-		return Cookie.cookiesArray().some((item) => item.trim().startsWith(`${key}=`));
+		return document.cookie.split(";").some((item) => item.trim().startsWith(`${key}=`));
 	}
 
 	public static json<E>(): E | {} {
@@ -13,7 +11,8 @@ export default class Cookie<T> implements IStorage {
 		if (cookie === "") {
 			return {};
 		}
-		return Cookie.cookiesArray()
+		return document.cookie
+			.split("; ")
 			.map((v) => v.split("="))
 			.reduce((acc: any, v: any) => {
 				acc[decodeURIComponent(v[0].trim())] = decodeURIComponent(v[1].trim());
@@ -22,7 +21,7 @@ export default class Cookie<T> implements IStorage {
 	}
 
 	public static deleteAll() {
-		Cookie.cookiesArray().forEach((cookie) => {
+		document.cookie.split(";").forEach((cookie) => {
 			document.cookie = cookie.replace(/^ +/, "").replace(/=.*/, `=;expires=${new Date().toUTCString()};path=/`);
 		});
 	}
@@ -30,7 +29,7 @@ export default class Cookie<T> implements IStorage {
 	public static get<E>(key: string): E | string {
 		const value = Cookie.json<E>()[key];
 		try {
-			return JSON.parse(value) as E;
+			return JSON.parse(decodeURIComponent(value)) as E;
 		} catch (error) {
 			return value;
 		}
