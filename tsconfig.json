@@ -1,37 +1,17 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
-    "outDir": "build/",
-    "module": "CommonJS",
-    "target": "es5",
     "lib": [
-      "dom",
-      "esnext"
+      "DOM"
     ],
-    "incremental": false,
-    "alwaysStrict": true,
-    "declaration": true,
-    "declarationMap": false,
-    "downlevelIteration": true,
-    "stripInternal": true,
-    "sourceMap": false,
     "moduleResolution": "node",
-    "rootDir": "src",
-    "forceConsistentCasingInFileNames": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
+    "esModuleInterop": true,
+    "alwaysStrict": true,
     "noImplicitAny": true,
+    "noImplicitThis": true,
+    "noImplicitReturns": true,
     "strictNullChecks": true,
-    "suppressImplicitAnyIndexErrors": true,
-    "noUnusedLocals": true
-  },
-  "exclude": [
-    "node_modules",
-    "build",
-    "scripts",
-    "acceptance-tests",
-    "webpack",
-    "jest",
-    "src/setupTests.ts"
-  ]
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true,
+    "forceConsistentCasingInFileNames": true
+  }
 }
