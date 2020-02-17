@@ -3,6 +3,11 @@
     "lib": [
       "DOM"
     ],
+    "outDir": "build",
+    "target": "ES3",
+    "declaration": true,
+    "declarationMap": true,
+    "composite": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
     "alwaysStrict": true,
@@ -13,5 +18,7 @@
     "strictFunctionTypes": true,
     "strictPropertyInitialization": true,
     "forceConsistentCasingInFileNames": true
-  }
+  },
+  "files": ["src/index.ts"],
+  "include": ["src/"]
 }

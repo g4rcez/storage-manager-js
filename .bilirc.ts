@@ -5,7 +5,7 @@ const configuration: Configuration = {
 	input: "src/index.ts",
 	output: {
 		format: ["es", "cjs", "umd", "umd-min"],
-		moduleName: "StorageManager",
+		moduleName: "StorageManagerJs",
 		dir: "build",
 	},
 	plugins: {
