@@ -5,7 +5,7 @@ const fnDate = (str: number | string) => {
 	return typeof str === "number" ? new Date(date * 1 + (str as number) * 864e5) : str;
 };
 
-const epoch = "1969-12-31T23:59:59.000Z"
+const epoch = "1969-12-31T23:59:59.000Z";
 
 const Cookie: TypeStorage = {
 	has: (key: string) => {
