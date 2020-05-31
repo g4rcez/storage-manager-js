@@ -1,4 +1,4 @@
-import { CookieSettings, TypeStorage } from "../types";
+import type { CookieSettings, TypeStorage } from "../types";
 
 const fnDate = (str: number | string) => {
 	const date: any = new Date();

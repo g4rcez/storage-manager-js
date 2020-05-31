@@ -3,7 +3,6 @@ export type CookieSettings = Partial<{
 	path: string;
 	sameSite: "lax" | "strict" | "";
 	useSecure: boolean;
-	maxAge: number;
 }>;
 
 export type TypeStorage = {

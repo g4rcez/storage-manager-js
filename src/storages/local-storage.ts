@@ -1,4 +1,4 @@
-import { TypeStorage } from "../types";
+import type { TypeStorage } from "../types";
 import { map } from "../utils";
 
 const LocalStorage: TypeStorage = {
