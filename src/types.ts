@@ -5,11 +5,18 @@ export type CookieSettings = Partial<{
 	useSecure: boolean;
 }>;
 
-export type TypeStorage = {
+type Methods = {
 	delete(key: string): void;
 	deleteAll(): void;
-	get<T extends any>(key: string): T | string | undefined;
+	get<T = any>(key: string): T | string | undefined;
 	has(key: string): boolean;
 	json<T>(): T;
+};
+
+export type TypeStorage = Methods & {
+	set(key: string, object: any): void;
+};
+
+export type CookieStorage = Methods & {
 	set(key: string, object: any, parameters?: CookieSettings): void;
 };

@@ -1,6 +1,6 @@
-export const map = (object: object, callback: any): void => {
+export const map = (object: object, callback: (x: string) => void): void => {
 	try {
-		Object.keys(object).forEach((x) => callback(x));
+		Object.keys(object).forEach(callback);
 	} catch (error) {
 		window.console.log(error);
 	}

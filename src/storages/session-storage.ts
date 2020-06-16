@@ -2,12 +2,8 @@ import type { TypeStorage } from "../types";
 import { map } from "../utils";
 
 const SessionStorage: TypeStorage = {
-	has: (key: string) => {
-		return window.sessionStorage.getItem(key) !== undefined;
-	},
-	json: <T>() => {
-		return (window.sessionStorage as unknown) as T;
-	},
+	has: (key: string) => window.sessionStorage.getItem(key) !== undefined,
+	json: <T>() => (window.sessionStorage as unknown) as T,
 	deleteAll: () => {
 		map(window.sessionStorage, SessionStorage.delete);
 	},
@@ -19,10 +15,10 @@ const SessionStorage: TypeStorage = {
 			return str;
 		}
 	},
-	delete: (key: string) => {
+	delete: (key) => {
 		window.sessionStorage.removeItem(key);
 	},
-	set: (key: string, object: any) => {
+	set: (key, object) => {
 		window.sessionStorage.setItem(key, JSON.stringify(object));
 	},
 };

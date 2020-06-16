@@ -3,9 +3,12 @@
     "lib": [
       "DOM"
     ],
+    "rootDir": "./src",
     "outDir": "build/",
-    "target": "ES3",
+    "target": "ES5",
     "declaration": true,
+    "composite": true,
+    "incremental": true,
     "declarationMap": true,
     "allowSyntheticDefaultImports": true,
     "allowUnusedLabels": true,
@@ -23,9 +26,6 @@
     "strictPropertyInitialization": true,
     "forceConsistentCasingInFileNames": true
   },
-  "files": [
-    "src/index.ts"
-  ],
   "include": [
     "src/"
   ]

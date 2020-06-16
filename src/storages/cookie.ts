@@ -1,16 +1,14 @@
-import type { CookieSettings, TypeStorage } from "../types";
+import type { CookieSettings, CookieStorage } from "../types";
 
 const fnDate = (str: number | string) => {
 	const date: any = new Date();
 	return typeof str === "number" ? new Date(date * 1 + (str as number) * 864e5) : str;
 };
 
-const epoch = "1969-12-31T23:59:59.000Z";
+const zeroEpoch = "1969-12-31T23:59:59.000Z";
 
-const Cookie: TypeStorage = {
-	has: (key: string) => {
-		return document.cookie.split(";").some((item) => item.trim().startsWith(`${key}=`));
-	},
+const Cookie: CookieStorage = {
+	has: (key) => document.cookie.split(";").some((item) => item.trim().startsWith(`${key}=`)),
 	json: <T>(): T => {
 		const cookie = document.cookie;
 		if (cookie === "") {
@@ -40,16 +38,7 @@ const Cookie: TypeStorage = {
 	delete: (key: string) => {
 		document.cookie = `${encodeURIComponent(key)}=;expires=${new Date().toUTCString()}`;
 	},
-	set: (
-		key: string,
-		object: any,
-		{ expires = epoch, path = "/", useSecure = true, sameSite = "strict" }: CookieSettings = {
-			expires: epoch,
-			path: "/",
-			sameSite: "strict",
-			useSecure: true,
-		},
-	) => {
+	set: (key: string, object: any, { expires = zeroEpoch, path = "/", sameSite = "strict", useSecure = true } = {}) => {
 		const secure = useSecure ? ";secure" : ";";
 		const exp = fnDate(expires);
 		const value = encodeURIComponent(JSON.stringify(object));

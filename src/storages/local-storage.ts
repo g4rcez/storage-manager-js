@@ -2,12 +2,8 @@ import type { TypeStorage } from "../types";
 import { map } from "../utils";
 
 const LocalStorage: TypeStorage = {
-	has(key: string) {
-		return window.localStorage.getItem(key) !== undefined;
-	},
-	json: <T>() => {
-		return (window.localStorage as unknown) as T;
-	},
+	has: (key: string) => window.localStorage.getItem(key) !== undefined,
+	json: <T>() => (window.localStorage as unknown) as T,
 	deleteAll: () => {
 		map(window.localStorage, LocalStorage.delete);
 	},
@@ -19,10 +15,10 @@ const LocalStorage: TypeStorage = {
 			return str;
 		}
 	},
-	delete: (key: string) => {
+	delete: (key) => {
 		window.localStorage.removeItem(key);
 	},
-	set: (key: string, object: any) => {
+	set: (key, object) => {
 		window.localStorage.setItem(key, JSON.stringify(object));
 	},
 };
