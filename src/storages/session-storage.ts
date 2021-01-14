@@ -1,16 +1,16 @@
 import type { TypeStorage } from "../types";
-import { map } from "../utils";
+import { isNil, map } from "../utils";
 
 const SessionStorage: TypeStorage = {
-	has: (key: string) => window.sessionStorage.getItem(key) !== undefined,
+	has: (key: string) => !isNil(window.sessionStorage.getItem(key)),
 	json: <T>() => (window.sessionStorage as unknown) as T,
 	deleteAll: () => {
 		map(window.sessionStorage, SessionStorage.delete);
 	},
 	get: <T>(key: string) => {
-		const str = window.sessionStorage.getItem(key) || "";
+		const str = window.sessionStorage.getItem(key);
 		try {
-			return JSON.parse(str) as T;
+			return JSON.parse(str as never) as T;
 		} catch (error) {
 			return str;
 		}

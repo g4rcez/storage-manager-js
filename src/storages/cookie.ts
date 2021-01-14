@@ -27,8 +27,11 @@ const Cookie: CookieStorage = {
 			document.cookie = cookie.replace(/^ +/, "").replace(/=.*/, `=;expires=${new Date().toUTCString()};path=/`);
 		});
 	},
-	get: <E>(key: string): E => {
+	get: <E>(key: string): E | null => {
 		const value = (Cookie.json<E>() as any)[key];
+		if (value === null) {
+			return null;
+		}
 		try {
 			return JSON.parse(decodeURIComponent(value)) as E;
 		} catch (error) {

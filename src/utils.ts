@@ -5,3 +5,5 @@ export const map = (object: object, callback: (x: string) => void): void => {
 		window.console.log(error);
 	}
 };
+
+export const isNil = <T>(item: T) => item === null || item === undefined;

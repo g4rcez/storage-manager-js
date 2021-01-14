@@ -8,7 +8,7 @@ export type CookieSettings = Partial<{
 type Methods = {
 	delete(key: string): void;
 	deleteAll(): void;
-	get<T = any>(key: string): T | string | undefined;
+	get<T = any>(key: string): T | string | null;
 	has(key: string): boolean;
 	json<T>(): T;
 };
