@@ -24,10 +24,10 @@
     "localStorage",
     "sessionStorage"
   ],
-  "homepage": "https://github.com/g4rcez/storage-manager",
+  "homepage": "https://github.com/g4rcez/storage-manager-js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/g4rcez/storage-manager"
+    "url": "https://github.com/g4rcez/storage-manager-js"
   },
   "author": "Allan Garcez <allan.f.garcez@gmail.com> (https://github.com/g4rcez)",
   "license": "MIT",
