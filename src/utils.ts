@@ -7,3 +7,8 @@ export const map = (object: object, callback: (x: string) => void): void => {
 };
 
 export const isNil = <T>(item: T) => item === null || item === undefined;
+
+export const isPrimitive = (a: any) => {
+	const type = typeof a;
+	return a === "string" || a === "number" || a === "boolean" || isNil(a);
+};
