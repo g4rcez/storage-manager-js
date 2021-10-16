@@ -14,9 +14,9 @@ type Methods = {
 };
 
 export type TypeStorage = Methods & {
-	set(key: string, object: any): void;
+	set<T = unknown>(key: string, object: T): void;
 };
 
 export type CookieStorage = Methods & {
-	set(key: string, object: any, parameters?: CookieSettings): void;
+	set<T = unknown>(key: string, object: T, parameters?: CookieSettings): void;
 };

@@ -1,4 +1,5 @@
-import type { CookieSettings, CookieStorage } from "../types";
+import type { CookieStorage } from "../types";
+import { isNil, isPrimitive } from "../utils";
 
 const fnDate = (str: number | string) => {
 	const date: any = new Date();
@@ -29,7 +30,7 @@ const Cookie: CookieStorage = {
 	},
 	get: <E>(key: string): E | null => {
 		const value = (Cookie.json<E>() as any)[key];
-		if (value === null) {
+		if (isNil(value)) {
 			return null;
 		}
 		try {
@@ -41,10 +42,10 @@ const Cookie: CookieStorage = {
 	delete: (key: string) => {
 		document.cookie = `${encodeURIComponent(key)}=;expires=${new Date().toUTCString()}`;
 	},
-	set: (key: string, object: any, { expires = zeroEpoch, path = "/", sameSite = "strict", useSecure = true } = {}) => {
+	set: (key: string, object: unknown, { expires = zeroEpoch, path = "/", sameSite = "strict", useSecure = true } = {}) => {
 		const secure = useSecure ? ";secure" : ";";
 		const exp = fnDate(expires);
-		const value = encodeURIComponent(JSON.stringify(object));
+		const value = isPrimitive(object) ? object : encodeURIComponent(JSON.stringify(object));
 		const samesite = sameSite === "" ? "" : `${sameSite};`;
 		document.cookie = `${encodeURIComponent(key)}=${value};path=${path};expires=${exp};${samesite}${secure}`;
 	},
