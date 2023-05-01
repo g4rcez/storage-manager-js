@@ -3,3 +3,5 @@ node_modules
 *.log*
 cache/
 build/
+tests/node_modules
+.idea
