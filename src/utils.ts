@@ -10,5 +10,5 @@ export const isNil = <T>(item: T) => item === null || item === undefined;
 
 export const isPrimitive = (a: any) => {
 	const type = typeof a;
-	return a === "string" || a === "number" || a === "boolean" || isNil(a);
+	return type === "string" || type === "number" || type === "boolean" || isNil(a);
 };
