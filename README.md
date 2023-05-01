@@ -8,6 +8,8 @@ A little way to control Cookies, LocalStorage and SessionStorage without tears
 npm install storage-manager-js
 # or
 yarn add storage-manager-js
+# or
+pnpm add storage-manager-js
 ```
 
 ## Using
@@ -70,7 +72,7 @@ LocalStorage.deleteAll()
 - `deleteAll(): void`: Delete all keys from your current storage
 - `get<T extends any>(key: string): T | string | undefined`: get the value of `key` from your current storage
 - `has(key: string): boolean`: check if `key` exist in your current storage
-- `json<T>(): T`: get all storage as object
+- `json<T>(parse: boolean = false): T`: get all storage as object. You can pass a boolean to parse or not your content using `JSON.parse` on your storage. Cookie manager always parse your content.
 - `set(key: string, object: any, parameters?: CookieSettings): void`: save `key` with `value` in your current storage. Note for Cookie:
 
 ```typescript
