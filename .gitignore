@@ -1,6 +1,7 @@
 node_modules
 .sizecache.json
 *.log*
+dist/
 cache/
 build/
 tests/node_modules
