@@ -9,7 +9,7 @@ export default defineConfig({
 		lib: {
 			name: "storageManagerJs",
 			entry: "./src/index.ts",
-			fileName: "storageManagerJs",
+			fileName: "index",
 			formats: ["cjs", "es", "umd"],
 		},
 	},
