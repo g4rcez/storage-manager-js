@@ -1,24 +1,35 @@
 {
   "compilerOptions": {
+    "target": "ES2015",
     "lib": [
-      "DOM"
+      "dom",
+      "dom.iterable",
+      "esnext"
     ],
-    "outDir": "build",
-    "target": "ES3",
     "declaration": true,
-    "declarationMap": true,
-    "composite": true,
-    "moduleResolution": "node",
+    "allowJs": true,
+    "skipLibCheck": true,
     "esModuleInterop": true,
-    "alwaysStrict": true,
-    "noImplicitAny": true,
-    "noImplicitThis": true,
-    "noImplicitReturns": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "emitDeclarationOnly": true,
+    "declarationDir": "./dist",
     "strictNullChecks": true,
     "strictFunctionTypes": true,
+    "strictBindCallApply": true,
     "strictPropertyInitialization": true,
-    "forceConsistentCasingInFileNames": true
+    "alwaysStrict": true,
+    "noImplicitAny": true,
+    "allowUnreachableCode": false,
+    "downlevelIteration": false
   },
-  "files": ["src/index.ts"],
-  "include": ["src/"]
+  "include": [
+    "src"
+  ]
 }

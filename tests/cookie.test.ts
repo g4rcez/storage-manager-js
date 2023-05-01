@@ -1,4 +1,5 @@
-const { Cookie } = require("../build");
+import { Cookie } from "../src";
+import { expect, describe, it, vi } from "vitest";
 
 describe("Cookies test", () => {
 	it("Get nothing", () => {
@@ -21,5 +22,15 @@ describe("Cookies test", () => {
 		const token = { a: { b: { c: { d: 1 } } } };
 		Cookie.set("token", token, { useSecure: true });
 		expect(Cookie.get("token")).toEqual(null);
+	});
+
+	it("Listeners", () => {
+		const fns = {
+			listener: () => {},
+		};
+		const fn = vi.spyOn(fns, "listener");
+		Cookie.listener(fn);
+		Cookie.set("ok", true);
+		expect(fn).toBeCalledTimes(1);
 	});
 });

@@ -2,14 +2,30 @@
   "name": "storage-manager-js",
   "version": "4.0.7",
   "description": "A little way to control Cookies, LocalStorage and SessionStorage without tears",
-  "main": "./build/index.js",
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.mjs",
+      "type": "./dist/index.d.ts"
+    }
+  },
   "scripts": {
-    "format": "prettier --write '{.,src/**}/*.{js,jsx,ts,tsx}'",
-    "build": "bili",
-    "rm": "rm -rf build",
-    "prepublish": "yarn compile && yarn test",
-    "compile": "yarn rm && yarn build",
-    "test": "jest"
+    "build": "vite build; tsc",
+    "dev": "vite build --watch",
+    "pack": "npm pack --dry-run --pack-destination out out/storage-manager-js",
+    "prepack": "pnpm build",
+    "prepare": "vite build",
+    "start": "vite build --watch",
+    "test": "vitest run && npm run test:types",
+    "test:types": "tsc -p ./tsconfig.test.json",
+    "test:watch": "vitest watch"
   },
   "keywords": [
     "cookie",
@@ -31,19 +47,11 @@
   },
   "author": "Allan Garcez <allan.f.garcez@gmail.com> (https://github.com/g4rcez)",
   "license": "MIT",
-  "dependencies": {
-    "jest": "26.6.3"
-  },
   "devDependencies": {
-    "@types/mocha": "8.2.2",
-    "@typescript-eslint/eslint-plugin": "4.22.1",
-    "@typescript-eslint/parser": "4.22.1",
-    "bili": "5.0.5",
-    "browser-resolve": "2.0.0",
-    "prettier": "2.2.1",
-    "rollup-plugin-typescript2": "0.30.0",
-    "tslib": "2.2.0",
-    "tslint-config-prettier": "1.18.0",
-    "typescript": "4.2.4"
+    "jsdom": "21.1.1",
+    "prettier": "2.8.8",
+    "typescript": "4.2.4",
+    "vite": "4.3.3",
+    "vitest": "0.30.1"
   }
 }
