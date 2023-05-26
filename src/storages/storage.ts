@@ -1,12 +1,12 @@
 import { Subscribe, TypeStorage } from "../types";
 import { getStorage, isNil, json, map } from "../utils";
 
-export const createStorage = (storage: Storage): TypeStorage => {
+export const createStorage = (getStorageProvider: () => Storage): TypeStorage => {
 	const listeners = new Set<Subscribe>();
 
 	const deleteItem = (key: string) => {
-		storage.removeItem(key);
-		const store = json(storage);
+		getStorageProvider().removeItem(key);
+		const store = json(getStorageProvider());
 		listeners.forEach((fn) => fn(store));
 	};
 
@@ -16,19 +16,19 @@ export const createStorage = (storage: Storage): TypeStorage => {
 			listeners.add(fn);
 			return () => listeners.delete(fn);
 		},
-		json: <T>(parse: boolean = false) => (parse ? json(storage) : (storage as unknown as T)),
+		json: <T>(parse: boolean = false) => (parse ? json(getStorageProvider()) : (getStorageProvider() as unknown as T)),
 		has: (key: string) => {
-			const item = storage.getItem(key);
+			const item = getStorageProvider().getItem(key);
 			return !isNil(item);
 		},
 		deleteAll: () => {
-			map(storage, deleteItem);
-			listeners.forEach((fn) => fn(storage));
+			map(getStorageProvider(), deleteItem);
+			listeners.forEach((fn) => fn(getStorageProvider()));
 		},
-		get: <T>(key: string) => getStorage(key, storage),
+		get: <T>(key: string) => getStorage(key, getStorageProvider()),
 		set: (key, object) => {
-			storage.setItem(key, JSON.stringify(object));
-			listeners.forEach((fn) => fn(storage));
+			getStorageProvider().setItem(key, JSON.stringify(object));
+			listeners.forEach((fn) => fn(getStorageProvider()));
 		},
 	};
 };
