@@ -33,4 +33,10 @@ describe("Cookies test", () => {
 		Cookie.set("ok", true);
 		expect(fn).toBeCalledTimes(1);
 	});
+
+	it("multidomain", () => {
+		Cookie.set("global", "global", { useSecure: false, domain: window.location.hostname, multiDomain: true });
+		const get = Cookie.get("global");
+		expect(get).toEqual("global");
+	});
 });

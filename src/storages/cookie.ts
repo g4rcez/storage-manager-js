@@ -1,11 +1,9 @@
-import type { CookieStorage } from "../types";
+import type { CookieStorage, SetCookies, SetCookiesParser } from "../types";
 import { isNil, isPrimitive } from "../utils";
 import { Subscribe } from "../types";
 
-const fnDate = (str: number | string) => {
-	const date: any = new Date();
-	return typeof str === "number" ? new Date(date * 1 + (str as number) * 864e5) : str;
-};
+const fnDate = (str: number | string | Date) =>
+	str instanceof Date ? str : typeof str === "number" ? new Date((new Date() as any) * 1 + (str as number) * 864e5) : str;
 
 const zeroEpoch = "1969-12-31T23:59:59.000Z";
 
@@ -28,6 +26,23 @@ const callListeners = () => {
 	const store = json();
 	listeners.forEach((fn) => fn(store));
 };
+
+const parsers: SetCookiesParser = [
+	{ name: "expires", parse: (opts) => `expires=${fnDate(opts.expires ?? zeroEpoch)}` },
+	{ name: "maxAge", parse: (opts) => (opts.maxAge ? `max-age=${fnDate(opts.expires ?? zeroEpoch)}` : "") },
+	{ name: "path", parse: (opts) => `path=${opts.path ?? "/"}` },
+	{ name: "sameSite", parse: (opts) => `samesite=${opts.sameSite ?? "strict"}` },
+	{ name: "useSecure", parse: (opts) => `${opts.useSecure ?? true ? "secure" : ""}` },
+	{
+		name: "domain",
+		parse: (opts) => {
+			const domain = opts.domain ?? "";
+			if (domain === "") return "";
+			return `domain=${opts.multiDomain ? "." : ""}${domain}`;
+		},
+	},
+	{ name: "partitioned", parse: (opts) => (opts.partitioned ? `Partitioned` : "") },
+];
 
 const Cookie: CookieStorage = {
 	json,
@@ -57,12 +72,19 @@ const Cookie: CookieStorage = {
 		document.cookie = `${encodeURIComponent(key)}=;expires=${new Date().toUTCString()}`;
 		callListeners();
 	},
-	set: (key: string, object: unknown, { expires = zeroEpoch, path = "/", sameSite = "strict", useSecure = true } = {}) => {
-		const secure = useSecure ? ";secure" : ";";
-		const exp = fnDate(expires);
+	set: (key: string, object: unknown, opts: SetCookies = {}) => {
 		const value = isPrimitive(object) ? object : encodeURIComponent(JSON.stringify(object));
-		const samesite = sameSite === "" ? "" : `${sameSite};`;
-		document.cookie = `${encodeURIComponent(key)}=${value};path=${path};expires=${exp};${samesite}${secure}`;
+		const cookies = parsers
+			.reduce<string[]>(
+				(acc, el) => {
+					const val = el.parse(opts);
+					return val === "" ? acc : acc.concat(val);
+				},
+				[`${encodeURIComponent(key)}=${value}`],
+			)
+			.join(";");
+		console.log(cookies);
+		document.cookie = cookies;
 		callListeners();
 	},
 };
