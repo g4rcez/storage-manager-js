@@ -83,7 +83,6 @@ const Cookie: CookieStorage = {
 				[`${encodeURIComponent(key)}=${value}`],
 			)
 			.join(";");
-		console.log(cookies);
 		document.cookie = cookies;
 		callListeners();
 	},
