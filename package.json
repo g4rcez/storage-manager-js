@@ -1,19 +1,24 @@
 {
   "name": "storage-manager-js",
-  "version": "4.2.1",
+  "version": "4.2.5",
   "description": "A little way to control Cookies, LocalStorage and SessionStorage without tears",
-  "main": "./dist/index.mjs",
-  "module": "./dist/index.mjs",
+  "source": "./src/index.ts",
   "types": "./dist/index.d.ts",
-  "files": [
-    "dist",
-    "src"
-  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.cjs",
   "exports": {
     ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.mjs",
-      "type": "./dist/index.d.ts"
+      "default": {
+        "type": "./dist/index.d.ts",
+        "import": "./dist/index.cjs",
+        "default": "./dist/index.js",
+        "require": "./dist/index.cjs"
+      },
+      "types": {
+        "import": "./dist/index.d.ts",
+        "require": "./dist/index.d.ts",
+        "default": "./dist/index.d.ts"
+      }
     }
   },
   "scripts": {

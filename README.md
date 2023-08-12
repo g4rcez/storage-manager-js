@@ -30,9 +30,10 @@ const token = Cookie.get("token") // at this moment, is undefined
 // and here too https://www.chromium.org/updates/same-site
 Cookie.set("token", token, { useSecure: false })
 
+type MyCookieStorage = {}
 
 // get all cookies as object
-Cookie.json()
+Cookie.json<T>()
 
 // check if key exist in cookies
 Cookie.has("token")
@@ -43,6 +44,8 @@ Cookie.delete("token")
 // delete all cookies
 Cookie.deleteAll()
 ```
+
+# Example using `LocalStorage`. The same can be done using `SessionStorage`
 
 ```typescript
 import { LocalStorage } from "storage-manager-js"
@@ -77,12 +80,16 @@ LocalStorage.deleteAll()
 
 ```typescript
 // Cookie.set has this optional arguments
-{
-	expires: number | string // when your cookie expires
-	path: string // the path to save your cookie
-	sameSite: "lax" | "strict" | "" // read more in https://www.chromestatus.com/feature/5088147346030592
-	useSecure: boolean // read more in https://www.chromestatus.com/feature/5088147346030592
-}
+export type SetCookies = Partial<{
+    domain: string; // the domain of cookies
+    expires: CookieAge; // expires in
+    maxAge: CookieAge; // maxAge of cookie
+    multiDomain?: boolean; // apply multi domain logic
+    partitioned: boolean; // 
+    path: string; // the path that cookie will be used
+    sameSite: "strict" | "lax" | "none" | ""; // same site rules
+    useSecure: boolean; // http or https accepted
+}>;
 ```
 
 ## References
