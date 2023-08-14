@@ -44,7 +44,7 @@ const parsers: SetCookiesParser = [
 	{ name: "partitioned", parse: (opts) => (opts.partitioned ? `Partitioned` : "") },
 ];
 
-const Cookie: CookieStorage = {
+export const Cookie: CookieStorage = {
 	json,
 	listener: (fn) => {
 		listeners.add(fn);
@@ -88,4 +88,3 @@ const Cookie: CookieStorage = {
 	},
 };
 
-export default Cookie;

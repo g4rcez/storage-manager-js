@@ -25,10 +25,18 @@ export const createStorage = (getStorageProvider: () => Storage): TypeStorage =>
 			map(getStorageProvider(), deleteItem);
 			listeners.forEach((fn) => fn(getStorageProvider()));
 		},
-		get: <T>(key: string) => getStorage(key, getStorageProvider()),
+		get: <T>(key: string) => getStorage<T>(key, getStorageProvider()),
 		set: (key, object) => {
 			getStorageProvider().setItem(key, JSON.stringify(object));
 			listeners.forEach((fn) => fn(getStorageProvider()));
 		},
 	};
 };
+
+
+export const SessionStorage: TypeStorage = createStorage(() => window.sessionStorage);
+
+export const LocalStorage = createStorage(() => window.localStorage);
+
+
+
