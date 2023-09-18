@@ -77,6 +77,8 @@ LocalStorage.deleteAll()
 - `has(key: string): boolean`: check if `key` exist in your current storage
 - `json<T>(parse: boolean = false): T`: get all storage as object. You can pass a boolean to parse or not your content using `JSON.parse` on your storage. Cookie manager always parse your content.
 - `set(key: string, object: any, parameters?: CookieSettings): void`: save `key` with `value` in your current storage. Note for Cookie:
+- `listener(listener: (storage: any) => void): void`: A function that takes the entire storage as parameters and will be called after each change in your storage
+- `clearListener(): void`: clear all listeners at your storage
 
 ```typescript
 // Cookie.set has this optional arguments

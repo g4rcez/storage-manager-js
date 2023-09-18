@@ -50,6 +50,7 @@ export const Cookie: CookieStorage = {
 		listeners.add(fn);
 		return () => listeners.delete(fn);
 	},
+	clearListeners: () => listeners.clear(),
 	has: (key) => document.cookie.split(";").some((item) => item.trim().startsWith(`${key}=`)),
 	deleteAll: () => {
 		document.cookie.split(";").forEach((cookie) => {
