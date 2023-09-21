@@ -16,6 +16,7 @@ export const createStorage = (getStorageProvider: () => Storage): TypeStorage =>
 			listeners.add(fn);
 			return () => listeners.delete(fn);
 		},
+		clearListeners: () => listeners.clear(),
 		json: <T>(parse: boolean = false) => (parse ? json(getStorageProvider()) : (getStorageProvider() as unknown as T)),
 		has: (key: string) => {
 			const item = getStorageProvider().getItem(key);
@@ -36,7 +37,7 @@ export const createStorage = (getStorageProvider: () => Storage): TypeStorage =>
 
 export const SessionStorage: TypeStorage = createStorage(() => window.sessionStorage);
 
-export const LocalStorage = createStorage(() => window.localStorage);
+export const LocalStorage: TypeStorage = createStorage(() => window.localStorage);
 
 
 

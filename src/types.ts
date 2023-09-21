@@ -1,14 +1,15 @@
+export type Unsubscribe = () => void;
+
+export type Subscribe = (storage: any) => Unsubscribe;
+
 type TStorage = {
 	delete(key: string): void;
 	deleteAll(): void;
 	get<T = unknown>(key: string): T | string | null;
 	has(key: string): boolean;
 	listener: Subscribe;
+	clearListeners: () => void;
 };
-
-export type Unsubscribe = () => void;
-
-export type Subscribe = (storage: any) => Unsubscribe;
 
 export type TypeStorage = TStorage & {
 	json<T>(parse?: boolean): T;
